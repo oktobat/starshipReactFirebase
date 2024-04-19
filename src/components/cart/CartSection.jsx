@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components'
 import {useSelector, useDispatch } from 'react-redux'
-import { qtyUpdate, removeCartItem } from '@/store/product'
+import { fetchProducts } from '@/store/product'
+import { cartDB } from '@/assets/firebase'
 
 const TableBlock = styled.table`
 col:nth-child(1) { width: 100px; }
@@ -52,11 +53,17 @@ const CartSection = () => {
         const product = products.find(product => product.id === item.id)
         return { product:product, qty:item.qty }
     })
-
     const total = tempProducts.reduce((acc, item)=>acc+(item.product.price * item.qty), 0)
-    const allCount = tempProducts.reduce((acc, item)=>acc+(item.qty), 0)
+    const allCount = tempProducts.reduce((acc, item)=>acc+(parseInt(item.qty)), 0)
+
+    // 각 제품에 대한 수량 상태를 관리하기 위한 상태
+    const [quantityValues, setQuantityValues] = useState({});
 
     const onChange = (e, id, inventory) => {
+        setQuantityValues(prevState => ({
+            ...prevState,
+            [id]: newQty
+        }));
         let newQty = parseInt(e.target.value)
         if (newQty<1) {
             newQty = 1
@@ -64,7 +71,25 @@ const CartSection = () => {
         if (newQty>inventory) {
             newQty = inventory
         }
-        dispatch(qtyUpdate({id:id, newQty:newQty}))
+        cartDB.child(id).update({ qty: newQty })
+        .then(() => {
+            console.log('수량이 업데이트되었습니다.');
+            dispatch(fetchProducts());
+        })
+        .catch((error) => {
+            console.error('수량 업데이트 중 오류 발생:', error);
+        });
+    }
+
+    const removeCartItem = (id)=>{
+        cartDB.child(id).remove()
+        .then(() => {
+            console.log('성공적으로 삭제되었습니다.');
+            dispatch(fetchProducts());
+        })
+        .catch((error) => {
+            console.error('삭제 중 오류 발생:', error);
+        });
     }
 
     return (
@@ -85,25 +110,25 @@ const CartSection = () => {
                     <th>기타</th>
                 </tr>
             </thead>
-            { tempProducts.length ? 
+            { carts.length ? 
                 <tbody>
                     {
                         tempProducts.map((item, index)=>(
                             <tr key={index}>
                                 <td>
-                                    <img src={item.product.image} alt={item.product.title} />
+                                    <img src={item.product.photo} alt={item.product.name} />
                                 </td>
                                 <td>
-                                    { item.product.title } ({item.product.price.toLocaleString()})
+                                    { item.product.name } ({parseInt(item.product.price).toLocaleString()})
                                 </td>
                                 <td>
-                                    <input type="number" value={item.qty} onChange={ (e)=>onChange(e, item.product.id, item.product.inventory) } />
+                                    <input type="number" value={quantityValues[item.product.id] || item.qty}  onChange={ (e)=>onChange(e, item.product.id, item.product.inventory) } />
                                 </td>
                                 <td>
-                                    { (item.product.price * item.qty).toLocaleString() }
+                                    { (parseInt(item.product.price) * parseInt(item.qty)).toLocaleString() }
                                 </td>
                                 <td>
-                                    <button type="button" onClick={ ()=>dispatch(removeCartItem(item.product.id)) }>삭제</button>
+                                    <button type="button" onClick={ ()=>removeCartItem(item.product.id) }>삭제</button>
                                 </td>
                             </tr>
                         ))

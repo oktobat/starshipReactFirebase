@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import styled from 'styled-components'
+import { productDB, oStorage } from '@/assets/firebase'
 
 const ProductInsertSectionBlock = styled.div`
     max-width:500px; margin:0 auto;
@@ -26,8 +27,10 @@ const ProductInsertSection = () => {
         price:"",
         description:"",
         inventory:"",
-        photo:""
+        photo:"",
     })
+
+    const [photoValue, setPhotoValue] = useState("")
 
     const handleChange = (e)=>{
         console.log(e)
@@ -39,17 +42,37 @@ const ProductInsertSection = () => {
         setProduct(product=>({...product, [name]:value }))
     }
 
-    const onSubmit = (e)=>{
+    const handleFileChange = (e) => {
+        const file = e.target.files[0]; // 선택된 파일
+        console.log(file)  // 선택파일에 대한 모든 정보(사이즈, 이름 등)
+        setProduct((prevProduct) => ({...prevProduct, photo: file }));
+        setPhotoValue(e.target.value)
+    };
+
+    const onSubmit = async (e)=>{
         e.preventDefault()
         console.log(product)
-        setProduct({
-            category:"woman",
-            name:"",
-            price:"",
-            description:"",
-            inventory:"",
-            photo:""
-        })
+        const addProduct = {...product, id:Date.now()}
+        try {
+            if (product.photo) {
+                const storageRef = oStorage.ref();
+                const fileRef = storageRef.child(product.photo.name);
+                await fileRef.put(product.photo);
+                addProduct.photo = await fileRef.getDownloadURL(); // 업로드한 파일의 다운로드 URL을 상품 데이터에 추가
+            }
+            await productDB.push(addProduct)
+            setProduct({
+                category:"woman",
+                name:"",
+                price:"",
+                description:"",
+                inventory:"",
+                photo:""
+            })
+            setPhotoValue("")
+        } catch(error){
+            console.log("오류 : ", error)
+        }
     }
 
     return (
@@ -66,11 +89,11 @@ const ProductInsertSection = () => {
                 </div>
                 <div>
                     <label htmlFor="name">상품명:</label>
-                    <input type="text" name="name" id="name" value={product.name} onChange={handleChange} />
+                    <input required type="text" name="name" id="name" value={product.name} onChange={handleChange} />
                 </div>
                 <div>
                     <label htmlFor="price">가격:</label>
-                    <input type="number" name="price" id="price" value={product.price} onChange={handleChange} />
+                    <input required type="number" name="price" id="price" value={product.price} onChange={handleChange} />
                 </div>
                 <div>
                     <label htmlFor="description">요약설명:</label>
@@ -78,11 +101,11 @@ const ProductInsertSection = () => {
                 </div>
                 <div>
                     <label htmlFor="inventory">재고:</label>
-                    <input type="number" name="inventory" id="inventory" value={product.inventory} onChange={handleChange} />
+                    <input required type="number" name="inventory" id="inventory" value={product.inventory} onChange={handleChange} />
                 </div>
                 <div>
                     <label htmlFor="photo">상품사진:</label>
-                    <input type="file" name="photo" id="photo" value={product.photo} onChange={handleChange} />
+                    <input type="file" name="photo" id="photo" value={photoValue} onChange={handleFileChange} />
                 </div>
                 <div className="btn">
                     <button type="submit">등록</button>

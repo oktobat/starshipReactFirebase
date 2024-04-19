@@ -1,10 +1,11 @@
 import React, {useState, useRef, useEffect} from 'react';
-import { fetchProducts, addToCart } from '@/store/product'
+import { fetchProducts  } from '@/store/product'
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components'
 import { BsCartPlusFill, BsCartPlus  } from "react-icons/bs";
 import { ImSpinner } from "react-icons/im";
 import { Link } from 'react-router-dom'
+import { cartDB } from '@/assets/firebase'
 
 const ProductSectionBlock = styled.div``
 
@@ -87,6 +88,21 @@ const ProductSection = ({title}) => {
         }
     }
 
+    const addToCart = async (id)=>{
+        try {
+            const cartItemRef = cartDB.child(id); // 해당 상품의 레퍼런스 생성
+            const cartItemSnapshot = await cartItemRef.once('value'); // 해당 상품의 스냅샷 가져오기
+            let quantity = 1;
+            if (cartItemSnapshot.exists()) { // 해당 상품이 이미 장바구니에 있는 경우 수량을 증가시킴
+                quantity = cartItemSnapshot.val().qty + 1;
+            }
+            // 장바구니에 상품 추가 또는 업데이트
+            await cartItemRef.set({ id:id, qty:quantity });
+        } catch(error){
+            console.log("오류메시지:", error)
+        }
+    }
+
     useEffect(()=>{
         dispatch(fetchProducts())
     }, [])
@@ -128,19 +144,19 @@ const ProductSection = ({title}) => {
                 products.map((item, index)=>(
                     <ListBlock key={index}>
                         <div className="photo">
-                            <Link to={`/product/${item.title}`} state={{ item : item }}><img src={item.image} alt={item.title} /></Link>
+                            <Link to={`/product/${item.name}`} state={{ item : item }}><img src={item.photo} alt={item.name} /></Link>
                         </div>
                         <div className="info">
-                            <p><a href="#">{item.title}</a></p>
-                            <p>{item.price.toLocaleString()}</p>
-                            <p className="rating">
+                            <p><a href="#">{item.name}</a></p>
+                            <p>{parseInt(item.price).toLocaleString()}</p>
+                            {/* <p className="rating">
                                 {
                                     Array.from({length:5}).map((_, index)=>(
                                         (index+1)<=item.rating ? <span key={index}>★</span> : <span key={index}>☆</span>
                                     ))
                                 }
-                            </p>
-                            { item.inventory!=cartIdCount(item.id) ? <button onClick={ ()=>dispatch(addToCart(item.id)) }><BsCartPlusFill /></button> : <button><BsCartPlus /></button> }
+                            </p> */}
+                            { item.inventory!=cartIdCount(item.id) ? <button onClick={ ()=>addToCart(item.id) }><BsCartPlusFill /></button> : <button><BsCartPlus /></button> }
                             { item.inventory!=cartIdCount(item.id) ? <span>{ item.inventory - cartIdCount(item.id) }개 남았습니다.</span> : <span>품절!!</span>}
                         </div>
                     </ListBlock>

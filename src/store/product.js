@@ -14,33 +14,10 @@ const productSlice = createSlice({
         initCarts(state, action){
             state.carts = action.payload
         },
-        addToCart(state, action){ 
-            const productId = action.payload
-            const existingItem = state.carts.find(item=>item.id==productId)
-            if (existingItem) {
-                existingItem.qty++
-            } else {
-                state.carts.push({ id:action.payload, qty:1})
-            }
-        },
-        qtyUpdate(state, action){
-           let {id, newQty} = action.payload
-           let cartItem = state.carts.find(item=>item.id==id)
-           console.log(cartItem)
-           if (cartItem) {
-                cartItem.qty = newQty
-           }
-            //  let newCart = state.carts.map(item=>item.id==id ? {...item, qty:newQty} : item )
-            //  state.carts = newCart
-        },
-        removeCartItem(state, action){
-            let id = action.payload
-            state.carts = state.carts.filter(item=>item.id!==id)
-        }
     }
 })
 
-export const { initProducts, initCarts, addToCart, qtyUpdate, removeCartItem } = productSlice.actions;
+export const { initProducts, initCarts } = productSlice.actions;
 
 export const fetchProducts = ()=> async dispatch => {
     try {
@@ -53,7 +30,12 @@ export const fetchProducts = ()=> async dispatch => {
       })
       cartDB.on('value', (snapshot)=>{
         const cartsObj = snapshot.val()
-        const cartsArr = Object.values(cartsObj)
+        let cartsArr = null;
+        if (cartsObj) {
+            cartsArr = Object.values(cartsObj)
+        } else {
+            cartsArr = []
+        }
         dispatch(initCarts(cartsArr))
       })
     } catch (error) {
