@@ -27,11 +27,11 @@ const ProductDetailSectionBlock = styled.div`
 
 const ProductDetailSection = ({product}) => {
     return (
-        <ProductDetailSectionBlock>
-            <h2>{ product.title }</h2>
+        <ProductDetailSectionBlock className="row"> 
+            <h2>{ product.name }</h2>
             <div className="content">
                 <div className="photo">
-                    <img src={'/'+product.image} alt={product.title} />
+                    <img src={product.photo} alt={product.name} />
                 </div>
                 <div className="info">
                     <p>이 상품의 아이디는 { product.id }</p>

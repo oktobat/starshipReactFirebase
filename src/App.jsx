@@ -10,6 +10,9 @@ import ProductView from '@/views/ProductView'
 import ProductDetailView from '@/views/ProductDetailView'
 import CartView from '@/views/CartView'
 import ProductInsertView from '@/views/ProductInsertView'
+import LoginView from '@/views/LoginView'
+import JoinView from '@/views/JoinView'
+// import MemberModifyView from '@/views/MemberModifyView'
 
 const App = () => {
   return (
@@ -24,6 +27,9 @@ const App = () => {
         <Route path="/product/:id" element={ <ProductDetailView />} />
         <Route path="/cart" element={ <CartView />} />
         <Route path="/productInsert" element={ <ProductInsertView />} />
+        <Route path="/login" element={ <LoginView /> } />
+        <Route path="/join" element={ <JoinView /> } />
+        {/* <Route path="/memberModify" element={ <MemberModifyView /> } /> */}
       </Route>
     </Routes>
   );

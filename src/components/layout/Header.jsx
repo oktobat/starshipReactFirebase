@@ -2,8 +2,7 @@ import React, {useEffect} from 'react';
 import styled from 'styled-components'
 import { Link, NavLink } from 'react-router-dom'
 import { BsCartPlusFill  } from "react-icons/bs";
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux';
 import { fetchProducts } from '@/store/product'
 
 const HeaderBlock = styled.div`
@@ -73,6 +72,14 @@ const Header = () => {
             <h1 className="header__logo">
                 <Link to="/">STARSHIP SQUARE</Link>
             </h1>
+            {/* <div className="member">
+              <a href="#">로그아웃</a>
+              <Link to="/memberModify">정보수정()</Link>
+            </div> */}
+            <div className="member">
+                <Link to="/login">로그인</Link>
+                <Link to="/join">회원가입</Link>
+            </div>
             <ItemCount>
               <Link to="/cart">
                 <BsCartPlusFill />
