@@ -1,9 +1,10 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components'
 import { Link, NavLink } from 'react-router-dom'
 import { BsCartPlusFill  } from "react-icons/bs";
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchProducts } from '@/store/product'
+import { userLogout } from '@/store/member'
 
 const HeaderBlock = styled.div`
   text-align: center;
@@ -62,24 +63,38 @@ const ItemCount = styled.div`
 const Header = () => {
     const dispatch = useDispatch()
     const carts = useSelector(state=>state.products.carts)
+    const [user, setUser] = useState(useSelector(state=>state.members.user))
+
+    const handleLogout = (e)=>{
+      e.preventDefault()
+      setUser(null)
+      localStorage.clear()
+    }
 
     useEffect(()=>{
       dispatch(fetchProducts())
-    }, [])
+      let loging = localStorage.loging
+      if (loging) {
+        setUser(JSON.parse(loging))
+      }
+    }, [localStorage.loging])
 
     return (
         <HeaderBlock>
             <h1 className="header__logo">
                 <Link to="/">STARSHIP SQUARE</Link>
             </h1>
-            {/* <div className="member">
-              <a href="#">로그아웃</a>
-              <Link to="/memberModify">정보수정()</Link>
-            </div> */}
-            <div className="member">
-                <Link to="/login">로그인</Link>
-                <Link to="/join">회원가입</Link>
-            </div>
+            { user ?
+              <div className="member">
+                <a href="#" onClick={ handleLogout }>로그아웃</a>
+                <Link to="/memberModify">정보수정({user.userId})</Link>
+              </div>
+              :
+              <div className="member">
+                  <Link to="/login">로그인</Link>
+                  <Link to="/join">회원가입</Link>
+              </div>
+            }
             <ItemCount>
               <Link to="/cart">
                 <BsCartPlusFill />

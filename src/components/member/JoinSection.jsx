@@ -57,10 +57,10 @@ const JoinSection = () => {
             return
         }
 
-        let check = idCheck(userId);
-        if (!check) {
+        if (!idCheck(userId)) {
             return false;
         }
+
         const addMember = {userId:userId, userPw:userPw}
         try {
             await memberDB.push(addMember)
