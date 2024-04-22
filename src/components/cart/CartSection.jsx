@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components'
 import {useSelector, useDispatch } from 'react-redux'
 import { fetchProducts } from '@/store/product'
@@ -91,6 +91,10 @@ const CartSection = () => {
             console.error('삭제 중 오류 발생:', error);
         });
     }
+
+    useEffect(()=>{
+        dispatch(fetchProducts())
+    }, [])
 
     return (
         <TableBlock border="1">

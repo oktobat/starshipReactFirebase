@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import styled from 'styled-components'
 import { Link, NavLink } from 'react-router-dom'
 import { BsCartPlusFill  } from "react-icons/bs";
 import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux'
+import { fetchProducts } from '@/store/product'
 
 const HeaderBlock = styled.div`
   text-align: center;
@@ -59,7 +61,12 @@ const ItemCount = styled.div`
 `
 
 const Header = () => {
+    const dispatch = useDispatch()
     const carts = useSelector(state=>state.products.carts)
+
+    useEffect(()=>{
+      dispatch(fetchProducts())
+    }, [])
 
     return (
         <HeaderBlock>
