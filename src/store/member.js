@@ -5,7 +5,8 @@ const memberSlice = createSlice({
     name:"member",
     initialState : {
         members : [],  // [{ userId, userPw }, ...]
-        user : null    // { }
+        user : null,    // { }
+        admin : false
     },
     reducers : {
         initMembers(state, action){
@@ -13,11 +14,21 @@ const memberSlice = createSlice({
         },
         userLogin(state, action){
             state.user = action.payload
+            // localStorage.setItem('loging', JSON.stringify(action.payload))
+            localStorage.loging = JSON.stringify(action.payload) 
+            if (action.payload.userId=='tsalt@hanmail.net') {
+                localStorage.admin = JSON.stringify(true)
+                state.admin = true
+            } else {
+                localStorage.admin = JSON.stringify(false)
+                state.admin = false
+            }
         },
-        userLogout(state){
-            state.user = null
+        userLogout(state, action){
+            state.user = action.payload
+            state.admin = false
+            localStorage.clear()
         }
-
     }
 })
 

@@ -46,16 +46,14 @@ const LoginSection = () => {
             userPwRef.current.focus()
             return
         }
-        let user = members.find(item=>item.userId==userId)  // { userId:"", userPw:""}
-        if (user) {
-            if (user.userPw!=userPw) {
+        let findUser = members.find(item=>item.userId==userId)  // { userId:"", userPw:""}
+        if (findUser) {
+            if (findUser.userPw!=userPw) {
                 alert("비밀번호가 틀렸습니다.")
                 userPwRef.current.focus()
                 return false
             } else {
-                console.log(user)
-                dispatch(userLogin(user))
-                localStorage.loging = JSON.stringify(user)
+                dispatch(userLogin(findUser))
                 navigate('/')
             }
         } else {

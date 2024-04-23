@@ -4,7 +4,7 @@ import { Link, NavLink } from 'react-router-dom'
 import { BsCartPlusFill  } from "react-icons/bs";
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchProducts } from '@/store/product'
-import { userLogout } from '@/store/member'
+import { userLogout, userLogin } from '@/store/member'
 
 const HeaderBlock = styled.div`
   text-align: center;
@@ -63,21 +63,20 @@ const ItemCount = styled.div`
 const Header = () => {
     const dispatch = useDispatch()
     const carts = useSelector(state=>state.products.carts)
-    const [user, setUser] = useState(useSelector(state=>state.members.user))
+    const user = useSelector(state=>state.members.user)
 
     const handleLogout = (e)=>{
       e.preventDefault()
-      setUser(null)
-      localStorage.clear()
+      dispatch(userLogout())
     }
 
     useEffect(()=>{
       dispatch(fetchProducts())
       let loging = localStorage.loging
       if (loging) {
-        setUser(JSON.parse(loging))
+        dispatch(userLogin(JSON.parse(loging)))
       }
-    }, [localStorage.loging])
+    }, [dispatch])
 
     return (
         <HeaderBlock>

@@ -49,6 +49,8 @@ const ProductInsert = styled.div`
 const ProductSection = ({title}) => {
     const dispatch = useDispatch();
 
+    const admin = useSelector(state=>state.members.admin)
+
     const carts = useSelector(state=>state.products.carts)
     const allData = useSelector(state=>state.products.products)
     const [products, setProducts] = useState(allData)
@@ -103,6 +105,8 @@ const ProductSection = ({title}) => {
         }
     }
 
+    const [loging, setLoging] = useState(false)
+
     useEffect(()=>{
         dispatch(fetchProducts())
     }, [])
@@ -117,6 +121,10 @@ const ProductSection = ({title}) => {
             }
         }
     }, [allData, title])
+
+    useEffect(()=>{
+        setLoging(admin)
+    }, [admin])
 
     if (!loading) {
         return (
@@ -163,9 +171,11 @@ const ProductSection = ({title}) => {
                 ))
             }
             </UlBlock>
-            <ProductInsert>
-                <Link to="/productInsert">상품등록</Link>
-            </ProductInsert>
+            { loging &&
+                <ProductInsert>
+                    <Link to="/productInsert">상품등록</Link>
+                </ProductInsert>
+            }
         </ProductSectionBlock>
     );
 };
