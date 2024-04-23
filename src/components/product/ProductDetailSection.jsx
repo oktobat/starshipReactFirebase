@@ -1,5 +1,7 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components'
+import {Link} from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 const ProductDetailSectionBlock = styled.div`
   h2 {
@@ -21,11 +23,24 @@ const ProductDetailSectionBlock = styled.div`
         padding: 10px 20px;
         margin: 10px 0;
       }
+      .btn {
+        a { padding:10px 20px; background:red; color:#fff; margin:20px 5px;
+          &:nth-child(2) { background:blue }
+          &:nth-child(3) { background:black }
+        }
+      }
     }
   }
 `
 
 const ProductDetailSection = ({product}) => {
+
+   const admin = useSelector(state=>state.members.admin)
+   const [loging, setLoging] = useState(false)
+   useEffect(()=>{
+     setLoging(admin)
+   }, [admin])
+
     return (
         <ProductDetailSectionBlock className="row"> 
             <h2>{ product.name }</h2>
@@ -38,6 +53,11 @@ const ProductDetailSection = ({product}) => {
                     <p>카테고리 : { product.category }</p>
                     <p>가격 : { product.price.toLocaleString() }</p>
                     <p>요약설명 : <span dangerouslySetInnerHTML={{ __html: product.description }} /></p>
+                    <div className="btn">
+                      <a href="#">장바구니</a>
+                      <Link to="">구매하기</Link>
+                      { loging && <Link to="/productModify" state={{ product  }}>상품수정</Link>}
+                    </div>
                 </div>
             </div>
         </ProductDetailSectionBlock>
