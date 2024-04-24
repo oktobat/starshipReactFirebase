@@ -22,7 +22,7 @@ const ActorTagBlock = styled.div`
 const ActorTag = ({onSearch, name}) => {
 
     const actorName = [
-        { name: '홍길동 수정' },
+        { name: '백진솔 수정' },
         { name: '장나라' },
         { name: '김범' },
         { name: '손우현' },
