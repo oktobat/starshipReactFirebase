@@ -38,7 +38,7 @@ const ActorSearch = ({ onSearch }) => {
       <form onSubmit={onSubmit}>
         <input
           type="text"
-          placeholder="백진솔 검색어를 입력하세요."
+          placeholder="수정 홍길동 수정 검색어를 입력하세요."
           value={text}
           onChange={onChange}
         />
