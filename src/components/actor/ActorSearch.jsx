@@ -38,7 +38,7 @@ const ActorSearch = ({ onSearch }) => {
       <form onSubmit={onSubmit}>
         <input
           type="text"
-          placeholder="배우 이름을 검색하세요."
+          placeholder="검색할 배우명을 입력하세요."
           value={text}
           onChange={onChange}
         />
