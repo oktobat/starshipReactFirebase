@@ -1,10 +1,14 @@
 import React, {useEffect, useState} from 'react';
+import cn from 'classnames'
+import { FaBars } from "react-icons/fa";
+import { MdClose } from "react-icons/md";
 import styled from 'styled-components'
 import { Link, NavLink } from 'react-router-dom'
 import { BsCartPlusFill  } from "react-icons/bs";
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchProducts } from '@/store/product'
 import { userLogout, userLogin } from '@/store/member'
+import { useMediaQuery } from 'react-responsive'
 
 const HeaderBlock = styled.div`
   text-align: center;
@@ -60,7 +64,52 @@ const ItemCount = styled.div`
   }
 `
 
+const Hamburger = styled.div`
+  position: absolute;
+  top: 20px;
+  right: 70px;
+  font-size: 30px;
+  color: blue;
+`
+
+const MobileNav = styled.nav`
+  position:fixed;
+  left:100%;
+  top:0; 
+  bottom:0; 
+  right:0;
+  background:rgba(0,0,0,0.5);
+  z-index:9999;
+  overflow:hidden;
+  transition:all 0.5s;
+  &.on { left:0;  }
+  .closeNav { font-size:30px; color:blue; position:absolute; 
+    top:20px; right:-50px; z-index:9999;
+    transition:all 0.3s;
+    &.on { right:20px; transition:all 0.5s; }
+  }
+  ul {
+    position:absolute;
+    top:0; right:-200px;
+    height:100%; width:200px; 
+    background:#fff;
+    padding-top:100px; 
+    transition:all 0.3s 0s;
+    &.on { right:0; transition:all 0.3s 0.2s; }
+    li { border-bottom:1px solid #000;
+      a { display:block; line-height:60px;  
+          transition: all 0.5s;
+          &:hover, &.active { color: #f00; }
+      }
+      &:nth-child(1) { border-top:1px solid #000 }
+    }
+  }
+`
+
 const Header = () => {
+    const mobile = useMediaQuery({ maxWidth:768 })
+    const [openNav, setOpenNav] = useState(false)
+
     const dispatch = useDispatch()
     const carts = useSelector(state=>state.products.carts)
     const user = useSelector(state=>state.members.user)
@@ -94,14 +143,45 @@ const Header = () => {
                   <Link to="/join">회원가입</Link>
               </div>
             }
+            { mobile &&
+              <Hamburger onClick={()=>setOpenNav(true)}>
+                <FaBars />
+              </Hamburger> 
+            }
             <ItemCount>
               <Link to="/cart">
                 <BsCartPlusFill />
                 <span>{ carts.length }</span> 
               </Link>
             </ItemCount>
-            <nav id="header__nav">
-                <ul>
+            { mobile ||
+              <nav id="header__nav">
+                  <ul>
+                      <li>
+                          <NavLink to="/artist">Artist</NavLink>
+                      </li>
+                      <li>
+                          <NavLink to="/actor">Actor</NavLink>
+                      </li>
+                      <li>
+                          <NavLink to="/movie">Movie</NavLink>
+                      </li>
+                      <li>
+                          <NavLink to="/theater">Theater</NavLink>
+                      </li>
+                      <li>
+                          <NavLink to="/product">Product</NavLink>
+                      </li>
+                      <li>
+                          <NavLink to="/">Community</NavLink>
+                      </li>
+                  </ul>
+              </nav>
+            }
+            { mobile &&
+              <MobileNav className={ openNav && "on"}>
+                <MdClose className={cn("closeNav", openNav && "on")} onClick={()=>setOpenNav(false)} />
+                <ul className={ openNav && "on"}>
                     <li>
                         <NavLink to="/artist">Artist</NavLink>
                     </li>
@@ -121,7 +201,8 @@ const Header = () => {
                         <NavLink to="/">Community</NavLink>
                     </li>
                 </ul>
-            </nav>
+              </MobileNav>
+            }
         </HeaderBlock>
     );
 };
