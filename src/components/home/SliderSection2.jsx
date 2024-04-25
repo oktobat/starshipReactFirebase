@@ -7,6 +7,7 @@ import { IoIosArrowDropleftCircle, IoIosArrowDroprightCircle } from 'react-icons
 const SliderSection2Block = styled.div`
     margin:50px auto;
     position:relative; 
+    padding:0 50px; 
     img { width:100%; padding:0 20px;  }
     .slick-arrow {
         position:absolute; top:50%; transform:translateY(-50%); 
@@ -25,7 +26,16 @@ const SliderSection2 = () => {
         slidesToShow:5,
         slidesToScroll:1,
         prevArrow : <IoIosArrowDropleftCircle />,
-        nextArrow : <IoIosArrowDroprightCircle />
+        nextArrow : <IoIosArrowDroprightCircle />,
+        responsive : [
+            {
+                breakpoint:769,
+                settings:{
+                    slidesToShow:3,
+                    slideToScroll:3
+                }
+            }
+        ]
     }
 
     const sliders = [

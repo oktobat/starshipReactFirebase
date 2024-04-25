@@ -5,6 +5,9 @@ const NewArrivalListBlock = styled.div`
     flex: 0 0 23%;
     border: 0px solid #000;
     margin: 10px 1%;
+    @media (max-width:768px) {
+        flex: 0 0 48%;
+    }
     .imgbox {
         overflow: hidden;
         border: 1px solid #ddd;

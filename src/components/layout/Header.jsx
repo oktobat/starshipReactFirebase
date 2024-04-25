@@ -79,7 +79,7 @@ const MobileNav = styled.nav`
   bottom:0; 
   right:0;
   background:rgba(0,0,0,0.5);
-  z-index:9999;
+  z-index:9999999;
   overflow:hidden;
   transition:all 0.5s;
   &.on { left:0;  }

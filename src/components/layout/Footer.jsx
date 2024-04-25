@@ -28,6 +28,32 @@ const FooterBlock = styled.div`
             }
         }
     }
+    @media screen and (max-width: 768px) {
+        padding: 0px;
+        .footer__nav {
+          border-bottom: 0px solid #fff;
+          padding-bottom: 0px;
+          margin-bottom: 0px;
+          a {
+            margin-right: 0px;
+            display: block;
+            border: 1px solid #fff;
+            border-top: none;
+            padding: 10px 20px;
+          }
+        }
+        .footer__info {
+          padding: 30px 20px;
+          line-height: 1.5em;
+          span {
+            margin-left: 0px;
+            display: block;
+            &::before {
+              display: none;
+            }
+          }
+        }
+      }
 `
 
 const Footer = () => {
