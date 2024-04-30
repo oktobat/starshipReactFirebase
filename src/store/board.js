@@ -11,11 +11,11 @@ const boardSlice = createSlice({
     },
     reducers : {
         initNotice(state, action){
-            state.notice = action.payload
-            state.list = action.payload
+            state.notice = action.payload.sort((a, b)=> a.key > b.key ? -1 : 1)
+            state.list = action.payload.sort((a, b)=> a.key > b.key ? -1 : 1)
         },
         initReview(state, action){
-            state.review = action.payload
+            state.review = action.payload.sort((a, b)=> a.key > b.key ? -1 : 1)
         },
         changeType(state, action){
             state.type = action.payload

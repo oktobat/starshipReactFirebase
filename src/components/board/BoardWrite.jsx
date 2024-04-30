@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
 import styled from 'styled-components'
-import {useSelector } from 'react-redux'
+import {useSelector, useDispatch } from 'react-redux'
 import {Link, useNavigate} from 'react-router-dom'
 import {noticeDB, reviewDB } from '@/assets/firebase'
+import { changeType } from '@/store/board'
 
 const BoardWriteBlock = styled.div`
     max-width:600px; margin:0 auto 50px; 
@@ -21,7 +22,7 @@ const BoardWriteBlock = styled.div`
 `
 
 const BoardWrite = ({type}) => {
-
+    const dispatch = useDispatch()
     const navigate = useNavigate()
     const user = useSelector(state=>state.members.user)
 
@@ -40,8 +41,10 @@ const BoardWrite = ({type}) => {
         const date = new Date().toISOString()
         if (type=="notice") {
             noticeDB.push({...board, writer:user.userId, hit:0, date:date})
+            dispatch(changeType("notice"))
         } else if (type=="review") {
             reviewDB.push({...board, writer:user.userId, hit:0, date:date})
+            dispatch(changeType("review"))
         }
         navigate("/boardList")
     }

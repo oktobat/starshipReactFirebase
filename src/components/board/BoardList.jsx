@@ -1,9 +1,8 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import styled from 'styled-components'
 import {Link} from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import dayjs from 'dayjs'
-import { changeType } from '@/store/board'
 
 const BoardListBlock = styled.div`
     margin:0px 0 50px; 
@@ -24,19 +23,11 @@ const BoardListBlock = styled.div`
         a { padding:10px 20px; background:red; color:#fff }
     }
 `
-
 const BoardList = () => {
-    const dispatch = useDispatch()
+
     const list = useSelector(state=>state.boards.list)
     const type = useSelector(state=>state.boards.type)
-
-    useEffect(()=>{
-        if (type=="notice") {
-            dispatch(changeType("notice"))
-        } else if (type=="review") {
-            dispatch(changeType("review"))
-        }
-    }, [])
+    const user = useSelector(state=>state.members.user)
 
     return (
         <BoardListBlock>
@@ -61,7 +52,7 @@ const BoardList = () => {
                     {   list.length>0 &&
                         list.map((post, index)=>(
                             <tr key={index}>
-                                <td>{index+1}</td>
+                                <td>{list.length - index}</td>
                                 <td>{post.subject}</td>
                                 <td>{post.writer}</td>
                                 <td>{ dayjs(post.date).format('YYYY-MM-DD') }</td>
@@ -71,9 +62,17 @@ const BoardList = () => {
                     }
                 </tbody>
             </table>
-            <div className="btn">
-                <Link to="/boardWrite">글쓰기</Link>
-            </div>
+            { (type=="notice" && user && user.userId=="tsalt@hanmail.net") &&
+                <div className="btn">
+                    <Link to="/boardWrite">글쓰기</Link>
+                </div>
+            }
+            {
+                (type=="review" && user) &&
+                <div className="btn">
+                    <Link to="/boardWrite">글쓰기</Link>
+                </div>
+            }
         </BoardListBlock>
     );
 };
