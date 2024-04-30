@@ -16,5 +16,7 @@ const oDB = firebaseConfig.database()
 export const productDB = oDB.ref('products')
 export const cartDB = oDB.ref('carts')
 export const memberDB = oDB.ref('members')
+export const noticeDB = oDB.ref('notice')
+export const reviewDB = oDB.ref('review')
 
 export const oStorage = firebaseConfig.storage();
