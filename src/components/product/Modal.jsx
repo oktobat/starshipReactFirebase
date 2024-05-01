@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components'
+import {useNavigate} from 'react-router-dom'
 
 const ModalBlock = styled.div`
     position:fixed;
@@ -9,6 +10,8 @@ const ModalBlock = styled.div`
     bottom:0; 
     z-index:999999999;
     background:rgba(0,0,0,0.5);
+    display:none;
+    &.on { display:block; }
     .modalContent {
         position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);
         width:308px; text-align:center; color:#555; background:#fff; 
@@ -21,17 +24,39 @@ const ModalBlock = styled.div`
     }
 `
 
-const Modal = () => {
+const Modal = ({product, qty, modalOpen, onReset}) => {
+    const navigate = useNavigate()
+    const {open, what} = modalOpen
+
+    const onCart = ()=>{
+        navigate("/cart", {state : {product:product, qty:qty}})
+    }
+
+    const onBuy = ()=>{
+        navigate("/payment", {state : { product:product, qty:qty }})
+    }
+
     return (
-        <ModalBlock>
-            <div className="modalContent">
-                <h2>확인</h2>
-                <p>바로구매를 진행하시겠습니까?</p>
-                <div className="btn">
-                    <button onClick="">확인</button>
-                    <button onClick="">취소</button>
+        <ModalBlock className={ open && "on" }>
+            {  what=="buy" ?
+                <div className="modalContent">
+                    <h2>확인</h2>
+                    <p>바로구매를 진행하시겠습니까?</p>
+                    <div className="btn">
+                        <button onClick={onBuy}>확인</button>
+                        <button onClick={onReset}>취소</button>
+                    </div>
                 </div>
-            </div>
+                :
+                <div className="modalContent">
+                    <h2>확인</h2>
+                    <p>상품이 장바구니에 담겼습니다.<br />바로 확인하시겠습니까?</p>
+                    <div className="btn">
+                        <button onClick={onCart}>확인</button>
+                        <button onClick={onReset}>취소</button>
+                    </div>
+                </div>
+            }
         </ModalBlock>
     );
 };

@@ -39,6 +39,7 @@ const ProductDetailSection = ({product}) => {
    const admin = useSelector(state=>state.members.admin)
    const [loging, setLoging] = useState(false)
    const [qty, setQty] = useState(1)
+   const [modalOpen, setModalOpen] = useState({open:false, what:""})
 
    const handleChange = (e)=>{
       let newQty = parseInt(e.target.value)
@@ -51,6 +52,10 @@ const ProductDetailSection = ({product}) => {
       setQty(newQty)
    }
    
+   const onReset = ()=>{
+      setModalOpen(false)
+   }
+
    useEffect(()=>{
      setLoging(admin)
    }, [admin])
@@ -69,13 +74,13 @@ const ProductDetailSection = ({product}) => {
                     <p>요약설명 : <span dangerouslySetInnerHTML={{ __html: product.description }} /></p>
                     <p>구매수량 : <input type="number" value={qty} onChange={ handleChange } /></p>
                     <div className="btn">
-                      <a href="#">장바구니</a>
-                      <a href="#">구매하기</a>
+                      <a href="#" onClick={ (e)=>{e.preventDefault(); setModalOpen({open:true, what:"cart"}) } }>장바구니</a>
+                      <a href="#" onClick={ (e)=>{e.preventDefault(); setModalOpen({open:true, what:"buy"}) } }>구매하기</a>
                       { loging && <Link to="/productModify" state={{ product  }}>상품수정</Link>}
                     </div>
                 </div>
             </div>
-            <Modal product={product} qty={qty} />
+            <Modal product={product} qty={qty} modalOpen={modalOpen} onReset={onReset} />
         </ProductDetailSectionBlock>
     );
 };
