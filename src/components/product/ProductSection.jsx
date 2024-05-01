@@ -55,7 +55,7 @@ const ProductSection = ({title}) => {
     const allData = useSelector(state=>state.products.products)
     const [products, setProducts] = useState(allData)
     const sortType = [
-        { type:'title', text:'상품명순'},
+        { type:'name', text:'상품명순'},
         { type:'price', text:'가격순'}
     ]
 

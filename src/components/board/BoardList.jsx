@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import styled from 'styled-components'
 import {Link} from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { changeType } from '@/store/board'
 import dayjs from 'dayjs'
 
 const BoardListBlock = styled.div`
@@ -24,10 +25,18 @@ const BoardListBlock = styled.div`
     }
 `
 const BoardList = () => {
-
+    const dispatch = useDispatch()
     const list = useSelector(state=>state.boards.list)
     const type = useSelector(state=>state.boards.type)
     const user = useSelector(state=>state.members.user)
+
+    useEffect(()=>{
+        if (type=="notice") {
+            dispatch(changeType("notice"))
+        } else {
+            dispatch(changeType("review"))
+        }
+    }, [])
 
     return (
         <BoardListBlock>
@@ -53,7 +62,7 @@ const BoardList = () => {
                         list.map((post, index)=>(
                             <tr key={index}>
                                 <td>{list.length - index}</td>
-                                <td>{post.subject}</td>
+                                <td><Link to={`/boardDetail/${post.subject}`} state={{post:post}}>{post.subject}</Link></td>
                                 <td>{post.writer}</td>
                                 <td>{ dayjs(post.date).format('YYYY-MM-DD') }</td>
                                 <td>{post.hit}</td>

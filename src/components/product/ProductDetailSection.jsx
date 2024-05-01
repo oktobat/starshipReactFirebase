@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import styled from 'styled-components'
 import {Link} from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import Modal from '@/components/product/Modal'
 
 const ProductDetailSectionBlock = styled.div`
   h2 {
@@ -37,6 +38,19 @@ const ProductDetailSection = ({product}) => {
 
    const admin = useSelector(state=>state.members.admin)
    const [loging, setLoging] = useState(false)
+   const [qty, setQty] = useState(1)
+
+   const handleChange = (e)=>{
+      let newQty = parseInt(e.target.value)
+      if (newQty<1) {
+        newQty = 1
+      }
+      if (newQty>product.inventory) {
+          newQty = product.inventory
+      }
+      setQty(newQty)
+   }
+   
    useEffect(()=>{
      setLoging(admin)
    }, [admin])
@@ -53,13 +67,15 @@ const ProductDetailSection = ({product}) => {
                     <p>카테고리 : { product.category }</p>
                     <p>가격 : { product.price.toLocaleString() }</p>
                     <p>요약설명 : <span dangerouslySetInnerHTML={{ __html: product.description }} /></p>
+                    <p>구매수량 : <input type="number" value={qty} onChange={ handleChange } /></p>
                     <div className="btn">
                       <a href="#">장바구니</a>
-                      <Link to="">구매하기</Link>
+                      <a href="#">구매하기</a>
                       { loging && <Link to="/productModify" state={{ product  }}>상품수정</Link>}
                     </div>
                 </div>
             </div>
+            <Modal product={product} qty={qty} />
         </ProductDetailSectionBlock>
     );
 };
