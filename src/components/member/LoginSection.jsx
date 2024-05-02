@@ -30,6 +30,9 @@ const LoginSection = () => {
     const userIdRef = useRef("")
     const userPwRef = useRef("")
 
+    const nextUrl = sessionStorage.getItem("nextUrl")
+    const choiceProduct = sessionStorage.getItem('choiceProduct')
+
     useEffect(()=>{
         dispatch(fetchMembers())
     }, [])
@@ -54,7 +57,11 @@ const LoginSection = () => {
                 return false
             } else {
                 dispatch(userLogin(findUser))
-                navigate('/')
+                if (nextUrl) {
+                   navigate(nextUrl, {state:JSON.parse(choiceProduct)}) 
+                } else {
+                   navigate('/')
+                }
             }
         } else {
             alert("회원이 아닙니다.")

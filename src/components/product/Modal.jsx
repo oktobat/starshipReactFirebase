@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components'
 import {useNavigate} from 'react-router-dom'
+import {useSelector} from 'react-redux'
 
 const ModalBlock = styled.div`
     position:fixed;
@@ -25,6 +26,7 @@ const ModalBlock = styled.div`
 `
 
 const Modal = ({product, qty, modalOpen, onReset}) => {
+    const user = useSelector(state=>state.members.user)
     const navigate = useNavigate()
     const {open, what} = modalOpen
 
@@ -33,7 +35,14 @@ const Modal = ({product, qty, modalOpen, onReset}) => {
     }
 
     const onBuy = ()=>{
-        navigate("/payment", {state : { product:product, qty:qty }})
+        if (!user) {
+            alert("로그인을 하십시오.")
+            sessionStorage.setItem("nextUrl", "/payment")
+            sessionStorage.setItem("choiceProduct", JSON.stringify({product:product, qty:qty}))
+            navigate("/login")
+        } else {
+          navigate("/payment", {state : { product:product, qty:qty }})
+        }
     }
 
     return (
