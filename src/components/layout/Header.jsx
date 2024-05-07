@@ -7,7 +7,7 @@ import { Link, NavLink } from 'react-router-dom'
 import { BsCartPlusFill  } from "react-icons/bs";
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchProducts } from '@/store/product'
-import { userLogout, userLogin } from '@/store/member'
+import { userLogout, localUser } from '@/store/member'
 import { useMediaQuery } from 'react-responsive'
 
 const HeaderBlock = styled.div`
@@ -121,9 +121,8 @@ const Header = () => {
 
     useEffect(()=>{
       dispatch(fetchProducts())
-      let loging = localStorage.loging
-      if (loging) {
-        dispatch(userLogin(JSON.parse(loging)))
+      if (localStorage.getItem('loging')){
+        dispatch(localUser(JSON.parse(localStorage.getItem('loging')))) 
       }
     }, [dispatch])
 

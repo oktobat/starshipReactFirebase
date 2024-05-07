@@ -4,9 +4,8 @@ import { memberDB } from '@/assets/firebase'
 const memberSlice = createSlice({
     name:"member",
     initialState : {
-        members : [],  // [{ userId, userPw }, ...]
-        user : null,    // { }
-        admin : false
+        members : [],  // [ { key, userId, userPw }, ...]
+        user : null,    // { key, userId}
     },
     reducers : {
         initMembers(state, action){
@@ -14,32 +13,27 @@ const memberSlice = createSlice({
         },
         userLogin(state, action){
             state.user = action.payload
-            // localStorage.setItem('loging', JSON.stringify(action.payload))
             localStorage.loging = JSON.stringify(action.payload) 
-            if (action.payload.userId=='tsalt@hanmail.net') {
-                localStorage.admin = JSON.stringify(true)
-                state.admin = true
-            } else {
-                localStorage.admin = JSON.stringify(false)
-                state.admin = false
-            }
+        },
+        localUser(state, action){
+            state.user = action.payload
         },
         userLogout(state, action){
-            state.user = action.payload
-            state.admin = false
+            state.user = null
             localStorage.clear()
         }
     }
 })
 
-export const { initMembers, userLogin, userLogout } = memberSlice.actions;
+export const { initMembers, userLogin, userLogout, localUser } = memberSlice.actions;
 export const fetchMembers = ()=> async dispatch => {
     try {
-      memberDB.on('value', (snapshot)=>{
-        const membersObj = snapshot.val()
-        const membersArr = Object.values(membersObj)
-        dispatch(initMembers(membersArr))
-      })
+      const snapshot = await memberDB.once('value')  
+      const membersObj = snapshot.val()
+      const membersArr = Object.entries(membersObj).map(([key, value]) => {
+        return { key:key, ...value }; // 키와 값 모두 포함한 객체 생성
+      });
+      dispatch(initMembers(membersArr))
     } catch (error) {
         console.error('오류:', error);
     }

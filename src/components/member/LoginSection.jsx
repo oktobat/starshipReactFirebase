@@ -49,14 +49,14 @@ const LoginSection = () => {
             userPwRef.current.focus()
             return
         }
-        let findUser = members.find(item=>item.userId==userId)  // { userId:"", userPw:""}
+        let findUser = members.find(item=>item.userId==userId)  // { key:key, userId:"", userPw:""}
         if (findUser) {
             if (findUser.userPw!=userPw) {
                 alert("비밀번호가 틀렸습니다.")
                 userPwRef.current.focus()
                 return false
             } else {
-                dispatch(userLogin(findUser))
+                dispatch(userLogin({key:findUser.key, userId:userId}))
                 if (nextUrl) {
                    navigate(nextUrl, {state:JSON.parse(choiceProduct)}) 
                 } else {
