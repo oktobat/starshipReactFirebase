@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector } from 'react-redux'
+import {useSelector} from 'react-redux'
 import styled from 'styled-components'
 import BoardWrite from '@/components/board/BoardWrite'
 
@@ -15,7 +15,7 @@ const BoardWriteView = () => {
 
     return (
         <BoardWriteViewBlock className="row">
-            <h2> {type} </h2>
+            <h2>{ type }</h2>
             <BoardWrite type={type} />
         </BoardWriteViewBlock>
     );

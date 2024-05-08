@@ -1,8 +1,10 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components'
-import {Link} from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import {Link, useNavigate} from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
 import Modal from '@/components/product/Modal'
+import {fetchCarts  } from '@/store/product'
+import {cartDB } from '@/assets/firebase'
 
 const ProductDetailSectionBlock = styled.div`
   h2 {
@@ -18,6 +20,7 @@ const ProductDetailSectionBlock = styled.div`
     }
     .info {
       flex: 1;
+      #quantity { padding:5px;  }
       button {
         background: red;
         color: #fff;
@@ -36,29 +39,62 @@ const ProductDetailSectionBlock = styled.div`
 
 const ProductDetailSection = ({product}) => {
 
-   const admin = useSelector(state=>state.members.admin)
-   const [loging, setLoging] = useState(false)
-   const [qty, setQty] = useState(1)
+   const dispatch = useDispatch()
+   const navigate = useNavigate()
+   const carts = useSelector(state=>state.products.carts)
+   const user = useSelector(state=>state.members.user)
    const [modalOpen, setModalOpen] = useState({open:false, what:""})
+   const [qty, setQty] = useState(1)
 
    const handleChange = (e)=>{
       let newQty = parseInt(e.target.value)
       if (newQty<1) {
-        newQty = 1
+          newQty = 1
       }
       if (newQty>product.inventory) {
           newQty = product.inventory
       }
       setQty(newQty)
    }
-   
-   const onReset = ()=>{
-      setModalOpen(false)
-   }
 
-   useEffect(()=>{
-     setLoging(admin)
-   }, [admin])
+   const onReset = ()=>{
+      setModalOpen({open:false, what:""})
+   }
+ 
+
+   const cartIdCount = (id) => {
+      const userItem = carts.find(value=>value.key==id)
+      if (userItem) {
+          return userItem.qty
+      } else {
+          return 0
+      }
+  }
+
+
+   const addToCart = async (id)=>{
+      if (user) {
+        try {
+            const cartItemRef = cartDB.child(user.key).child(id); // 해당 유저의 레퍼런스 생성
+            const cartItemSnapshot = await cartItemRef.once('value'); // 해당 유저의 스냅샷 가져오기
+            let quantity = 1;
+            if (cartItemSnapshot.exists()) { // 해당 유저가 이미 장바구니에 있는 경우 수량을 증가시킴
+                quantity = cartItemSnapshot.val().qty + 1;
+            }
+            // 장바구니에 상품 추가 또는 업데이트
+            await cartItemRef.set({qty:quantity });
+            dispatch(fetchCarts()).then(()=>{
+              setModalOpen({open:true, what:"cart"});
+            })
+        } catch(error){
+            console.log("오류메시지:", error)
+        }
+    } else {
+      alert("로그인하세요.")
+      sessionStorage.setItem('previousUrl', '/product');
+      navigate("/login")
+    }
+}
 
     return (
         <ProductDetailSectionBlock className="row"> 
@@ -72,15 +108,22 @@ const ProductDetailSection = ({product}) => {
                     <p>카테고리 : { product.category }</p>
                     <p>가격 : { product.price.toLocaleString() }</p>
                     <p>요약설명 : <span dangerouslySetInnerHTML={{ __html: product.description }} /></p>
-                    <p>구매수량 : <input type="number" value={qty} onChange={ handleChange } /></p>
+                    <p>
+                      구매수량 : { product.inventory - cartIdCount(product.id) ? <input id="quantity" type="number" value={qty} onChange={handleChange} /> : <span>품절!</span> }
+                    </p>
                     <div className="btn">
-                      <a href="#" onClick={ (e)=>{e.preventDefault(); setModalOpen({open:true, what:"cart"}) } }>장바구니</a>
-                      <a href="#" onClick={ (e)=>{e.preventDefault(); setModalOpen({open:true, what:"buy"}) } }>구매하기</a>
-                      { loging && <Link to="/productModify" state={{ product  }}>상품수정</Link>}
+                    { product.inventory - cartIdCount(product.id) ?
+                      <>
+                      <a href="#" onClick={(e)=>{e.preventDefault(); addToCart(product.id); }}>장바구니</a>
+                      <a href="#" onClick={(e)=>{e.preventDefault(); setModalOpen({open:true, what:"buy"})}}>구매하기</a>
+                      </>
+                      : ""
+                      }
+                      { (user && user.userId=='tsalt@hanmail.net') && <Link to="/productModify" state={{ product  }}>상품수정</Link>}
                     </div>
                 </div>
             </div>
-            <Modal product={product} qty={qty} modalOpen={modalOpen} onReset={onReset} />
+            <Modal modalOpen={modalOpen} onReset={onReset} product={product} qty={qty} />
         </ProductDetailSectionBlock>
     );
 };

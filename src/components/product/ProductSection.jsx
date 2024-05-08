@@ -1,10 +1,10 @@
-import React, {useState, useRef, useEffect} from 'react';
-import { fetchProducts  } from '@/store/product'
+import React, {useState, useRef, useEffect } from 'react';
+import { fetchProducts, fetchCarts  } from '@/store/product'
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components'
 import { BsCartPlusFill, BsCartPlus  } from "react-icons/bs";
 import { ImSpinner } from "react-icons/im";
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { cartDB } from '@/assets/firebase'
 
 const ProductSectionBlock = styled.div``
@@ -48,10 +48,11 @@ const ProductInsert = styled.div`
 
 const ProductSection = ({title}) => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    const admin = useSelector(state=>state.members.admin)
-
+    const user = useSelector(state=>state.members.user)
     const carts = useSelector(state=>state.products.carts)
+    const localCarts = useSelector(state=>state.products.localCarts)
     const allData = useSelector(state=>state.products.products)
     const [products, setProducts] = useState(allData)
     const sortType = [
@@ -81,34 +82,45 @@ const ProductSection = ({title}) => {
     }
 
     const cartIdCount = (id) => {
-        let item = carts.find(value=>value.id==id)
-        if (item) {
-            return item.qty
+        const userItem = carts.find(value=>value.key==id)
+        if (userItem) {
+            return userItem.qty
         } else {
             return 0
         }
     }
 
     const addToCart = async (id)=>{
-        try {
-            const cartItemRef = cartDB.child(id); // 해당 상품의 레퍼런스 생성
-            const cartItemSnapshot = await cartItemRef.once('value'); // 해당 상품의 스냅샷 가져오기
-            let quantity = 1;
-            if (cartItemSnapshot.exists()) { // 해당 상품이 이미 장바구니에 있는 경우 수량을 증가시킴
-                quantity = cartItemSnapshot.val().qty + 1;
+        if (user) {
+            try {
+                const cartItemRef = cartDB.child(user.key).child(id); // 해당 유저의 레퍼런스 생성
+                const cartItemSnapshot = await cartItemRef.once('value'); // 해당 유저의 스냅샷 가져오기
+                let quantity = 1;
+                if (cartItemSnapshot.exists()) { // 해당 유저가 이미 장바구니에 있는 경우 수량을 증가시킴
+                    quantity = cartItemSnapshot.val().qty + 1;
+                }
+                // 장바구니에 상품 추가 또는 업데이트
+                await cartItemRef.set({qty:quantity });
+                dispatch(fetchCarts())
+            } catch(error){
+                console.log("오류메시지:", error)
             }
-            // 장바구니에 상품 추가 또는 업데이트
-            await cartItemRef.set({ id:id, qty:quantity });
-        } catch(error){
-            console.log("오류메시지:", error)
+        } else {
+            alert("로그인을 해주세요.")
+            sessionStorage.setItem('previousUrl', '/product');
+            navigate("/login")
         }
     }
-
-    const [loging, setLoging] = useState(false)
 
     useEffect(()=>{
         dispatch(fetchProducts())
     }, [])
+
+    useEffect(()=>{
+        if (user) {
+          dispatch(fetchCarts())
+        }
+    }, [dispatch, user])
 
     useEffect(()=>{
         if (allData.length>0) {
@@ -120,11 +132,7 @@ const ProductSection = ({title}) => {
             }
         }
     }, [allData, title])
-
-    useEffect(()=>{
-        setLoging(admin)
-    }, [admin])
-
+ 
     if (!loading) {
         return (
             <ProductSectionBlock>
@@ -151,7 +159,7 @@ const ProductSection = ({title}) => {
                 products.map((item, index)=>(
                     <ListBlock key={index}>
                         <div className="photo">
-                            <Link to={`/product/${item.name}`} state={{ item : item }}><img src={item.photo} alt={item.name} /></Link>
+                            <Link to={`/product/${item.id}`} state={{ item : item }}><img src={item.photo} alt={item.name} /></Link>
                         </div>
                         <div className="info">
                             <p><a href="#">{item.name}</a></p>
@@ -163,14 +171,23 @@ const ProductSection = ({title}) => {
                                     ))
                                 }
                             </p> */}
-                            { item.inventory!=cartIdCount(item.id) ? <button onClick={ ()=>addToCart(item.id) }><BsCartPlusFill /></button> : <button><BsCartPlus /></button> }
-                            { item.inventory!=cartIdCount(item.id) ? <span>{ item.inventory - cartIdCount(item.id) }개 남았습니다.</span> : <span>품절!!</span>}
+                            { item.inventory!=cartIdCount(item.id) ? 
+                                <>
+                                    <button onClick={ ()=>addToCart(item.id) }><BsCartPlusFill /></button> 
+                                    <span>{ item.inventory - cartIdCount(item.id) }개 남았습니다.</span>
+                                </>
+                                : 
+                                <>
+                                    <button><BsCartPlus /></button> 
+                                    <span>품절!!</span>
+                                </>
+                            }
                         </div>
                     </ListBlock>
                 ))
             }
             </UlBlock>
-            { loging &&
+            { (user && user.userId=='tsalt@hanmail.net') &&
                 <ProductInsert>
                     <Link to="/productInsert">상품등록</Link>
                 </ProductInsert>

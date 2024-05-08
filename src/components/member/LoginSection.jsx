@@ -1,6 +1,7 @@
 import React, {useState, useRef, useEffect} from 'react';
 import styled from 'styled-components'
 import { fetchMembers, userLogin } from '@/store/member'
+import { fetchCarts } from '@/store/product'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
@@ -30,12 +31,12 @@ const LoginSection = () => {
     const userIdRef = useRef("")
     const userPwRef = useRef("")
 
-    const nextUrl = sessionStorage.getItem("nextUrl")
+    const previousUrl = sessionStorage.getItem('previousUrl');
     const choiceProduct = sessionStorage.getItem('choiceProduct')
 
     useEffect(()=>{
         dispatch(fetchMembers())
-    }, [])
+    }, [dispatch])
 
     const handleLogin = (e)=>{
         e.preventDefault()
@@ -49,7 +50,7 @@ const LoginSection = () => {
             userPwRef.current.focus()
             return
         }
-        let findUser = members.find(item=>item.userId==userId)  // { key:key, userId:"", userPw:""}
+        let findUser = members.find(item=>item.userId==userId)  // { userId:"", userPw:""}
         if (findUser) {
             if (findUser.userPw!=userPw) {
                 alert("비밀번호가 틀렸습니다.")
@@ -57,10 +58,15 @@ const LoginSection = () => {
                 return false
             } else {
                 dispatch(userLogin({key:findUser.key, userId:userId}))
-                if (nextUrl) {
-                   navigate(nextUrl, {state:JSON.parse(choiceProduct)}) 
+                dispatch(fetchCarts())
+                if (previousUrl=='/payment') {
+                    navigate(previousUrl, {state:JSON.parse(choiceProduct)})
+                    sessionStorage.removeItem('previousUrl')
+                } else if (previousUrl=='/product' || previousUrl=='/cart'){
+                    navigate(previousUrl)
+                    sessionStorage.removeItem('previousUrl')
                 } else {
-                   navigate('/')
+                    navigate('/')                
                 }
             }
         } else {

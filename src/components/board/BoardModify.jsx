@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import styled from 'styled-components'
 import {Link, useNavigate} from 'react-router-dom'
-import {useSelector} from 'react-redux'
 import {noticeDB, reviewDB } from '@/assets/firebase'
+import {useSelector} from 'react-redux'
 
 const BoardModifyBlock = styled.div`
 max-width:600px; margin:0 auto 50px; 
@@ -21,16 +21,17 @@ table {
 `
 
 const BoardModify = ({post}) => {
+    const type = useSelector(state=>state.boards.type)    
 
     const navigate = useNavigate()
-    const type = useSelector(state=>state.boards.type)
 
     const [board, setBoard] = useState({
-        subject : post.subject,
-        content: post.content
+        subject:post.subject,
+        content:post.content
     })
 
     const handleChange = (e)=>{
+        console.log(e)
         const {value, name} = e.target
         setBoard(post=>({...post, [name]:value }))
     }
@@ -62,21 +63,15 @@ const BoardModify = ({post}) => {
                     <tbody>
                         <tr>
                             <td>작성자</td>
-                            <td>
-                                <input type="text" name="writer" value={post.writer} disabled />
-                            </td>
+                            <td><input type="text" name={post.writer} value={post.writer} disabled /></td>
                         </tr>
                         <tr>
                             <td>제목</td>
-                            <td>
-                                <input type="text" name="subject" value={board.subject} onChange={handleChange} />
-                            </td>
+                            <td><input type="text" name="subject" value={board.subject} onChange={handleChange} /></td>
                         </tr>
                         <tr>
                             <td>내용</td>
-                            <td>
-                                <textarea name="content" value={board.content} onChange={handleChange}></textarea>
-                            </td>
+                            <td><textarea name="content" value={board.content} onChange={handleChange}></textarea></td>
                         </tr>
                     </tbody>
                 </table>

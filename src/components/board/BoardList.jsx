@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import styled from 'styled-components'
 import {Link} from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
+import {useSelector, useDispatch} from 'react-redux'
 import { changeType } from '@/store/board'
 import dayjs from 'dayjs'
 
@@ -24,11 +24,12 @@ const BoardListBlock = styled.div`
         a { padding:10px 20px; background:red; color:#fff }
     }
 `
+
 const BoardList = () => {
     const dispatch = useDispatch()
+    const user = useSelector(state=>state.members.user)
     const list = useSelector(state=>state.boards.list)
     const type = useSelector(state=>state.boards.type)
-    const user = useSelector(state=>state.members.user)
 
     useEffect(()=>{
         if (type=="notice") {
@@ -58,26 +59,24 @@ const BoardList = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {   list.length>0 &&
-                        list.map((post, index)=>(
-                            <tr key={index}>
-                                <td>{list.length - index}</td>
-                                <td><Link to={`/boardDetail/${post.subject}`} state={{post:post}}>{post.subject}</Link></td>
-                                <td>{post.writer}</td>
-                                <td>{ dayjs(post.date).format('YYYY-MM-DD') }</td>
-                                <td>{post.hit}</td>
-                            </tr>
-                        ))
+                    { list.length>0 && list.map((post, index)=>(
+                        <tr key={index}>
+                            <td>{list.length-index}</td>
+                            <td><Link to={`/boardList/${post.subject}`} state={{ post : post }}>{post.subject}</Link></td>
+                            <td>{post.writer}</td>
+                            <td>{dayjs(post.date).format('YYYY-MM-DD')}</td>
+                            <td>{post.hit}</td>
+                        </tr>
+                    ))
                     }
                 </tbody>
             </table>
-            { (type=="notice" && user && user.userId=="tsalt@hanmail.net") &&
+            { (type=="notice" && user && user.userId == "tsalt@hanmail.net") &&
                 <div className="btn">
                     <Link to="/boardWrite">글쓰기</Link>
                 </div>
             }
-            {
-                (type=="review" && user) &&
+            { (type=="review" && user) &&
                 <div className="btn">
                     <Link to="/boardWrite">글쓰기</Link>
                 </div>

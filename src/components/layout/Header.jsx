@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import cn from 'classnames'
+import {useNavigate} from 'react-router-dom'
 import { FaBars } from "react-icons/fa";
 import { MdClose } from "react-icons/md";
 import styled from 'styled-components'
 import { Link, NavLink } from 'react-router-dom'
 import { BsCartPlusFill  } from "react-icons/bs";
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchProducts } from '@/store/product'
+import { fetchCarts, initCarts} from '@/store/product'
 import { userLogout, localUser } from '@/store/member'
 import { useMediaQuery } from 'react-responsive'
 
@@ -107,24 +108,27 @@ const MobileNav = styled.nav`
 `
 
 const Header = () => {
+    const navigate = useNavigate()
     const mobile = useMediaQuery({ maxWidth:768 })
     const [openNav, setOpenNav] = useState(false)
 
     const dispatch = useDispatch()
-    const carts = useSelector(state=>state.products.carts)
     const user = useSelector(state=>state.members.user)
+    const cartsCount = useSelector(state=>state.products.cartsCount)
 
     const handleLogout = (e)=>{
       e.preventDefault()
       dispatch(userLogout())
+      dispatch(initCarts([]))
+      navigate("/")
     }
 
     useEffect(()=>{
-      dispatch(fetchProducts())
-      if (localStorage.getItem('loging')){
+      dispatch(fetchCarts())
+      if (localStorage.getItem('loging')) {
         dispatch(localUser(JSON.parse(localStorage.getItem('loging')))) 
-      }
-    }, [dispatch])
+      } 
+    }, [dispatch, cartsCount])
 
     return (
         <HeaderBlock>
@@ -150,7 +154,7 @@ const Header = () => {
             <ItemCount>
               <Link to="/cart">
                 <BsCartPlusFill />
-                <span>{ carts.length }</span> 
+                <span>{ cartsCount }</span>
               </Link>
             </ItemCount>
             { mobile ||

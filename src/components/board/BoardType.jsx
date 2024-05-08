@@ -1,6 +1,6 @@
-import React from 'react';
-import styled from 'styled-components'
-import { changeType } from '@/store/board'
+import React, {useState} from 'react';
+import styled from 'styled-components';
+import { changeType } from '@/store/board';
 import { useDispatch, useSelector } from 'react-redux'
 
 const BoardTypeBlock = styled.div`
@@ -11,15 +11,15 @@ const BoardTypeBlock = styled.div`
 `
 
 const BoardType = () => {
-    const dispatch = useDispatch()
     const type = useSelector(state=>state.boards.type)
+    const dispatch = useDispatch()
     const title = ["notice", "review"]
-    
+
     return (
         <BoardTypeBlock>
             {
                 title.map((item, index)=>(
-                    <button key={index} onClick={ ()=>dispatch(changeType(item)) } className={ type==item && "on" }>{item}</button>
+                    <button key={index} onClick={()=>dispatch(changeType(item))} className={type==item && "on"}>{item}</button>
                 ))
             }
         </BoardTypeBlock>
