@@ -76,6 +76,7 @@ const JoinSection = () => {
             return false;
         }
 
+
         const addMember = {mId:Date.now(), userId:userInfo.userId, userPw:userInfo.userPw, userIrum:userInfo.userIrum, handpone:userInfo.handphone, zipCode:userInfo.zipCode, addr1:userInfo.addr1, addr2:userInfo.addr2}
         try {
             await memberDB.push(addMember)
@@ -103,15 +104,6 @@ const JoinSection = () => {
     }, [])
 
     useEffect(() => {
-        // daum.Postcode 스크립트를 동적으로 로드
-        const script = document.createElement('script');
-        script.src = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
-        script.async = true;
-        document.body.appendChild(script);
-    
-        // 스크립트가 로드된 후 실행될 함수
-        script.onload = () => {
-          // daum.Postcode 객체 생성
           window.openDaumPostcode = () => {
             new window.daum.Postcode({
               oncomplete: (data) => {
@@ -141,7 +133,6 @@ const JoinSection = () => {
               },
             }).open();
           };
-        };
       }, []);
 
     return (
@@ -177,7 +168,7 @@ const JoinSection = () => {
                             <td rowSpan="3"><label htmlFor="addr1">주소 : </label></td>
                             <td>
                                 <button type="button" onClick={window.openDaumPostcode} style={{ height:'30px', verticalAlign:'middle', padding:'0 5px', marginRight:'5px'}}>우편번호</button>
-                                <input style={{ width:'150px'}} type="text" name="zipcode" id="zipcode" ref={mZipcodeRef} value={userInfo.zipCode} onChange={handleChange} readOnly  />
+                                <input style={{ width:'150px'}} type="text" name="zipCode" id="zipCode" ref={mZipcodeRef} value={userInfo.zipCode} onChange={handleChange} readOnly  />
                             </td>
                         </tr>
                         <tr>

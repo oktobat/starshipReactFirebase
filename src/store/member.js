@@ -4,8 +4,8 @@ import { memberDB } from '@/assets/firebase'
 const memberSlice = createSlice({
     name:"member",
     initialState : {
-        members : [],  // [{key, userId, userPw }, {key, userId, userPw }, ...]
-        user : null,    // {key, userId }
+        members : [],  // [{key, userId, userPw, userIrum, 주소, ... }, {key, userId, userPw }, ...]
+        user : null,    // {key, userId, userPw, 모든 정보}
     },
     reducers : {
         initMembers(state, action){
