@@ -79,7 +79,7 @@ const ProductDetailSection = ({product}) => {
             const cartItemSnapshot = await cartItemRef.once('value'); // 해당 유저의 스냅샷 가져오기
             let quantity = 1;
             if (cartItemSnapshot.exists()) { // 해당 유저가 이미 장바구니에 있는 경우 수량을 증가시킴
-                quantity = cartItemSnapshot.val().qty + 1;
+                quantity = cartItemSnapshot.val().qty + qty;
             }
             // 장바구니에 상품 추가 또는 업데이트
             await cartItemRef.set({qty:quantity });
@@ -114,8 +114,8 @@ const ProductDetailSection = ({product}) => {
                     <div className="btn">
                     { product.inventory - cartIdCount(product.id) ?
                       <>
-                      <a href="#" onClick={(e)=>{e.preventDefault(); addToCart(product.id); }}>장바구니</a>
-                      <a href="#" onClick={(e)=>{e.preventDefault(); setModalOpen({open:true, what:"buy"})}}>구매하기</a>
+                        <a href="#" onClick={(e)=>{e.preventDefault(); addToCart(product.id); }}>장바구니</a>
+                        <a href="#" onClick={(e)=>{e.preventDefault(); setModalOpen({open:true, what:"buy"})}}>구매하기</a>
                       </>
                       : ""
                       }
