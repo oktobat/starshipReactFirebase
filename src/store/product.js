@@ -53,6 +53,8 @@ export const fetchCarts = ()=> async (dispatch, getState) => {
                         })
                         const userCartsArrNotFirst = userCartsArr.filter((item, key)=>key!==0)
                         dispatch(initCarts(userCartsArrNotFirst));        
+                    } else {
+                        dispatch(initCarts([]));    
                     }
                 } else {
                     dispatch(initCarts([]));        
@@ -63,7 +65,9 @@ export const fetchCarts = ()=> async (dispatch, getState) => {
         } catch (error) {
             console.error('Error fetching carts:', error);
         }
-    } 
+    } else {
+        dispatch(initCarts([]));  
+    }
 }
 
 

@@ -8,7 +8,7 @@ import { Link, NavLink } from 'react-router-dom'
 import { BsCartPlusFill  } from "react-icons/bs";
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchCarts, initCarts} from '@/store/product'
-import { userLogout, localUser } from '@/store/member'
+import { userLogout, localUser, fetchMembers } from '@/store/member'
 import { useMediaQuery } from 'react-responsive'
 
 const HeaderBlock = styled.div`

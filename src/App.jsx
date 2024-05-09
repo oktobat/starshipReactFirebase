@@ -13,12 +13,13 @@ import CartView from '@/views/CartView'
 import ProductInsertView from '@/views/ProductInsertView'
 import LoginView from '@/views/LoginView'
 import JoinView from '@/views/JoinView'
-// import MemberModifyView from '@/views/MemberModifyView'
+import MemberModifyView from '@/views/MemberModifyView'
 import BoardListView from '@/views/BoardListView'
 import BoardWriteView from '@/views/BoardWriteView'
 import BoardDetailView from '@/views/BoardDetailView'
 import BoardModifyView from '@/views/BoardModifyView'
 import PaymentView from '@/views/PaymentView'
+import PaymentFinishView from '@/views/PaymentFinishView'
 
 const App = () => {
   return (
@@ -36,12 +37,13 @@ const App = () => {
         <Route path="/productInsert" element={ <ProductInsertView />} />
         <Route path="/login" element={ <LoginView /> } />
         <Route path="/join" element={ <JoinView /> } />
-        {/* <Route path="/memberModify" element={ <MemberModifyView /> } /> */}
+        <Route path="/memberModify" element={ <MemberModifyView /> } />
         <Route path="/boardList" element={ <BoardListView /> } />
         <Route path="/boardList/:subject" element={ <BoardDetailView /> } />
         <Route path="/boardWrite" element={ <BoardWriteView /> } />
         <Route path="/boardModify/:subject" element={ <BoardModifyView /> } />
         <Route path="/payment" element={ <PaymentView /> } />
+        <Route path="/paymentFinish" element={ <PaymentFinishView /> } />
       </Route>
     </Routes>
   );

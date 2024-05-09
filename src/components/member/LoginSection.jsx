@@ -57,7 +57,7 @@ const LoginSection = () => {
                 userPwRef.current.focus()
                 return false
             } else {
-                dispatch(userLogin({key:findUser.key, userId:userId}))
+                dispatch(userLogin({findUser}))
                 dispatch(fetchCarts())
                 if (previousUrl=='/payment') {
                     navigate(previousUrl, {state:JSON.parse(choiceProduct)})

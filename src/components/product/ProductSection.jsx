@@ -52,7 +52,6 @@ const ProductSection = ({title}) => {
 
     const user = useSelector(state=>state.members.user)
     const carts = useSelector(state=>state.products.carts)
-    const localCarts = useSelector(state=>state.products.localCarts)
     const allData = useSelector(state=>state.products.products)
     const [products, setProducts] = useState(allData)
     const sortType = [

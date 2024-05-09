@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Title from '@/components/layout/Title'
 import MemberModifySection from '@/components/member/MemberModifySection'
 

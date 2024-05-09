@@ -77,7 +77,7 @@ const JoinSection = () => {
         }
 
 
-        const addMember = {mId:Date.now(), userId:userInfo.userId, userPw:userInfo.userPw, userIrum:userInfo.userIrum, handpone:userInfo.handphone, zipCode:userInfo.zipCode, addr1:userInfo.addr1, addr2:userInfo.addr2}
+        const addMember = {mId:Date.now(), userId:userInfo.userId, userPw:userInfo.userPw, userIrum:userInfo.userIrum, handphone:userInfo.handphone, zipCode:userInfo.zipCode, addr1:userInfo.addr1, addr2:userInfo.addr2}
         try {
             await memberDB.push(addMember)
             alert("회원가입이 성공했습니다.")

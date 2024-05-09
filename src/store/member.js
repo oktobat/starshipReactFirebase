@@ -12,11 +12,13 @@ const memberSlice = createSlice({
             state.members = action.payload
         },
         userLogin(state, action){
-            state.user = action.payload
-            localStorage.loging = JSON.stringify(action.payload) 
+            const { key, userId, userIrum, userPw, handphone, addr1, addr2, zipCode} = action.payload.findUser
+            state.user = { key, userId, userIrum, userPw, handphone, addr1, addr2, zipCode}
+            localStorage.loging = JSON.stringify({key:key, userId:userId}) 
         },
         localUser(state, action){
-            state.user = action.payload
+            const findUser = state.members.find(item=>item.key==action.payload.key)
+            state.user = findUser
         },
         userLogout(state, action){
             state.user = null

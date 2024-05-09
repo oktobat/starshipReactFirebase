@@ -6,17 +6,18 @@ import { cartDB } from '@/assets/firebase'
 import {useNavigate} from 'react-router-dom'
 
 const TableBlock = styled.table`
-col:nth-child(1) { width: 100px; }
-col:nth-child(2) { width: auto; }
-col:nth-child(3) { width: 100px; }
+col:nth-child(1) { width: 50px; }
+col:nth-child(2) { width: 100px; }
+col:nth-child(3) { width: auto; }
 col:nth-child(4) { width: 100px; }
 col:nth-child(5) { width: 100px; }
+col:nth-child(6) { width: 100px; }
 th,
   td {
     padding: 7px;
   }
   tbody {
-    td:nth-child(3) {
+    td:nth-child(4) {
       text-align: center;
       input {
         border: 1px solid #000;
@@ -25,10 +26,10 @@ th,
         width: 50px;
       }
     }
-    td:nth-child(4) {
+    td:nth-child(5) {
       text-align: right;
     }
-    td:nth-child(5) {
+    td:nth-child(6) {
       text-align: center;
       button {
         padding: 5px 8px;
@@ -113,6 +114,29 @@ const CartSection = () => {
         }
     }
 
+    const [selectedProducts, setSelectedProducts] = useState([]);
+
+    const handleToggle = (productId) => {
+        if (selectedProducts.includes(productId)) {
+            setSelectedProducts(selectedProducts.filter(id => id !== productId));
+        } else {
+            setSelectedProducts([...selectedProducts, productId]);
+        }
+    };
+
+
+    const partBuy = (e)=>{
+        e.preventDefault()
+        if (!user) {
+            alert("로그인을 하십시오.")
+            sessionStorage.setItem('previousUrl', '/cart');
+            navigate("/login")
+        } else {
+            const selectedProductsData = tempProducts.filter(item => selectedProducts.includes(item.product.id));
+            navigate("/payment", {state:{product:selectedProductsData}})
+        }
+    }
+
 
     useEffect(() => {
         if (carts.length) {
@@ -139,9 +163,11 @@ const CartSection = () => {
                     <col />
                     <col />
                     <col />
+                    <col />
                 </colgroup>
                 <thead>
                     <tr>
+                        <th><input type="checkbox" /></th>
                         <th>이미지</th>
                         <th>상품명</th>
                         <th>수량</th>
@@ -153,6 +179,7 @@ const CartSection = () => {
                     <tbody>
                         {  tempProducts.map((item, index)=>(
                                 <tr key={index}>
+                                    <td style={{textAlign:'center'}}><input type="checkbox" name="choice" onClick={()=>handleToggle(item.product.id)} /></td>
                                     <td>
                                         <img src={item.product.photo} alt={item.product.name} />
                                     </td>
@@ -193,7 +220,7 @@ const CartSection = () => {
                 </tfoot>
             </TableBlock>
             <Button>
-                <button>선택상품 주문하기</button>
+                <button type="button" onClick={ partBuy }>선택상품 주문하기</button>
                 <button type="button" onClick={ allBuy }>전체상품 주문하기</button>
             </Button>
         </div>
