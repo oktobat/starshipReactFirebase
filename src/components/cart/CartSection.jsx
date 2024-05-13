@@ -100,6 +100,7 @@ const CartSection = () => {
             .catch((error) => {
                 console.error('삭제 중 오류 발생:', error);
             });
+            dispatch(fetchCarts())
         } 
     }
 

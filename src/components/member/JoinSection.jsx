@@ -103,6 +103,7 @@ const JoinSection = () => {
         dispatch(fetchMembers())
     }, [])
 
+    
     useEffect(() => {
           window.openDaumPostcode = () => {
             new window.daum.Postcode({

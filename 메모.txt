@@ -1,0 +1,9 @@
+0. https://ko.vitejs.dev/guide/static-deploy (정적 웹 페이지로 배포하기 : Google Firebase)
+1. firebase.json, .firebaserc (프로젝트 ID 수정) 루트에 파일 작성
+2. npm install -g firebase-tools@latest
+3. firebase login
+4. Allow Firebase to collect CLI and Emulator Suite usage and error reporting information? No
+5. Success! Logged in as chamsogum@gmail.com
+6. npm run build
+7. firebase deploy
+8. 카카오맵 Web 플랫폼에 파이어베이스 호스팅 주소 추가
