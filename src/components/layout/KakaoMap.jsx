@@ -43,23 +43,11 @@ const KakaoMap = () => {
     const mapRef = useRef(null)
     const pageRef = useRef(null)
     const [markers, setMarkers] = useState([]);
-    const [map, setMap] = useState(null);
+    const [myMap, setMyMap] = useState(null);
     const [places, setPlaces] = useState([]);
     const [pagination, setPagination] = useState({});
     const [infowindow, setInfowindow] = useState(null);
     const [keyword, setKeyword] = useState("")
-
-    useEffect(()=>{
-        let mapOption = {
-            center: new kakao.maps.LatLng(37.566826, 126.9786567),
-            level: 7
-        }
-        let mapContainer = mapRef.current;
-        let mapInstance = new kakao.maps.Map(mapContainer, mapOption)
-        let infowindowInstance = new kakao.maps.InfoWindow({ zIndex: 1 });
-        setMap(mapInstance)
-        setInfowindow(infowindowInstance)
-    }, [])
 
     const searchPlaces = ()=>{
         if (!keyword) {
@@ -67,7 +55,7 @@ const KakaoMap = () => {
             return false;
         }
         let ps = new kakao.maps.services.Places();
-        ps.keywordSearch( keyword, (data, status, pagination) => {
+        ps.keywordSearch(keyword, (data, status, pagination) => {
         if (status === kakao.maps.services.Status.OK) {
             console.log(data)
             setPlaces(data)
@@ -85,24 +73,29 @@ const KakaoMap = () => {
         }); 
     }
 
-    const displayPlaces = (places) => {
-        removeMarker();
-        let bounds = new kakao.maps.LatLngBounds()
-        for (let i in places) {
-            let placePosition = new kakao.maps.LatLng(places[i].y, places[i].x);
-            let marker = addMarker(placePosition, i)
-            bounds.extend(placePosition);
-            (function(marker, title) {
-                kakao.maps.event.addListener(marker, 'mouseover', function() {
-                    displayInfowindow(marker, title);
-                });
-                kakao.maps.event.addListener(marker, 'mouseout', function() {
-                    infowindow.close();
-                });
-            })(marker, places[i].place_name);
-        }
-        map.setBounds(bounds);
+    const removeMarker = () => {
+        markers.forEach(marker => {
+            marker.setMap(null);
+        });
+        setMarkers([]);
     }
+
+    const displayPlaces = (placesData) => {
+        removeMarker();
+        let bounds = new kakao.maps.LatLngBounds();
+        placesData.forEach((place, index) => {
+            let placePosition = new kakao.maps.LatLng(place.y, place.x);
+            let marker = addMarker(placePosition, index);
+            bounds.extend(placePosition);
+            kakao.maps.event.addListener(marker, 'mouseover', function() {
+                displayInfowindow(marker, place.place_name);
+            });
+            kakao.maps.event.addListener(marker, 'mouseout', function() {
+                infowindow.close();
+            });
+        });
+        myMap.setBounds(bounds);
+    };
 
     const addMarker = (position, idx) => {
         let imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', 
@@ -118,23 +111,34 @@ const KakaoMap = () => {
             image: markerImage 
         });
 
-        marker.setMap(map); // 지도 위에 마커를 표출합니다
-        setMarkers([...markers, marker]);  // 배열에 생성된 마커를 추가합니다
+        marker.setMap(myMap); // 지도 위에 마커를 표출합니다
+        setMarkers(prevMarkers => [...prevMarkers, marker]);  // 배열에 생성된 마커를 추가합니다
         return marker;
-    }
-
-    const removeMarker = () => {
-        for ( let i in markers ) {
-            markers[i].setMap(null);
-        }   
-        setMarkers([]);
     }
 
     function displayInfowindow(marker, title){
         let content = '<div style="padding:5px; z-index:1">' + title + '</div>';
         infowindow.setContent(content);
-        infowindow.open(map, marker);
+        infowindow.open(myMap, marker);
     }
+
+    const handleClick = (e, page)=>{
+        e.preventDefault(); 
+        removeMarker()
+        pagination.gotoPage(page);
+    }
+
+    useEffect(()=>{
+        let mapOption = {
+            center: new kakao.maps.LatLng(37.566826, 126.9786567),
+            level: 7
+        }
+        let mapContainer = mapRef.current;
+        let mapInstance = new kakao.maps.Map(mapContainer, mapOption)
+        let infowindowInstance = new kakao.maps.InfoWindow({ zIndex: 1 });
+        setMyMap(mapInstance)
+        setInfowindow(infowindowInstance)
+    }, [keyword])
 
     return (
         <KakaoMapBlock>
@@ -165,7 +169,7 @@ const KakaoMap = () => {
                     <div id="pagination" ref={pageRef}>
                         {
                             Array.from(Array(pagination.last).keys()).map((page)=>(
-                                <a href="#" key={page} className={ page+1==pagination.current && "on" } onClick={ (e)=>{ e.preventDefault(); pagination.gotoPage(page+1) } }>
+                                <a href="#" key={page} className={ page+1==pagination.current && "on" } onClick={ (e)=>{ handleClick(e, page+1) } }>
                                     <span>{page+1}</span>
                                 </a>
                                 )
