@@ -34,7 +34,8 @@
     "Set up automatic builds and deploys with GitHub?" N
     "File dist/index.html already exists. Overwrite?" N
 19. https://ko.vitejs.dev/guide/static-deploy (정적 웹 페이지로 배포하기 : Google Firebase)
-   프로젝트 루트 폴더에 두 개 파일 작성 : firebase.json, .firebaserc (프로젝트 ID 수정) 
+   프로젝트 루트 폴더에 두 개 파일 자동 생성(확인) : firebase.json, .firebaserc (프로젝트 ID 수정) 
+   자동생성되지 않으면 위의 참고사이트 참고해서 직접 만들것
 20. vsc : npm run build => 프로젝트 폴더에 dist 폴더가 생성됨
 21. vsc : firebase deploy
 22. 카카오맵 Web 플랫폼에 파이어베이스 호스팅 주소 추가
