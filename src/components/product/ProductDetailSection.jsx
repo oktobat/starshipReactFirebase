@@ -4,7 +4,7 @@ import {Link, useNavigate} from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import Modal from '@/components/product/Modal'
 import {fetchCarts  } from '@/store/product'
-import {cartDB } from '@/assets/firebase'
+import {cartDB, productDB } from '@/assets/firebase'
 
 const ProductDetailSectionBlock = styled.div`
   h2 {
@@ -96,6 +96,35 @@ const ProductDetailSection = ({product}) => {
     }
 }
 
+const removeProduct = async (e, key, id)=>{
+  e.preventDefault()
+  const answer = confirm("정말로 삭제하시겠습니까?")
+  if (answer) {
+      try {
+          await productDB.child(key).remove()
+          const cartsSnapshot = await cartDB.once('value');
+          if (cartsSnapshot.val()){
+            const userCartsObj = cartsSnapshot.val()
+            for (const userCartKey in userCartsObj) {
+              const userProductsObj = userCartsObj[userCartKey];
+              for (const productId in userProductsObj) {
+                if (productId == id) {
+                  // 해당 상품 ID를 가진 항목 삭제
+                  await cartDB.child(userCartKey).child(productId).remove();
+                }
+              }
+            }
+          }
+          navigate('/product')
+      } catch(error){
+          console.log("오류 : ", error)
+      }
+  } else {
+      return
+  }
+}
+
+
     return (
         <ProductDetailSectionBlock className="row"> 
             <h2>{ product.name }</h2>
@@ -120,6 +149,7 @@ const ProductDetailSection = ({product}) => {
                       : ""
                       }
                       { (user && user.userId=='tsalt@hanmail.net') && <Link to="/productModify" state={{ product  }}>상품수정</Link>}
+                      { (user && user.userId=='tsalt@hanmail.net') && <a href="#" onClick={ (e)=>removeProduct(e, product.key, product.id) }>상품삭제</a>}
                     </div>
                 </div>
             </div>
