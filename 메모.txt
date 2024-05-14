@@ -24,9 +24,11 @@
      Allow Firebase to collect CLI and Emulator Suite usage and error reporting information? No
      Success! Logged in as chamsogum@gmail.com
 18. vsc에서 firebase init (프로젝트마다 한번만)
-    존재하는 프로젝트 있음을 선택하고 프로젝트명 선택 (영어문장)
     "Are you ready to proceed?" Y
     스페이스바 눌러 선택 (*) "Hosting: Configure files for Firebase Hosting and (optionally) set up GitHub Action deploys"
+    Please select an option : (Use arrow keys) 
+       Use an existing project (선택)
+       프로젝트명 선택
     "What do you want to use as your public directory?"(public) dist 입력하고 엔터
     "Configure as a single-page app (rewrite all urls to /index.html)?" N
     "Set up automatic builds and deploys with GitHub?" N
