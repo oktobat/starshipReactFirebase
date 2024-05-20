@@ -140,6 +140,17 @@ const removeProduct = async (e, key, id)=>{
                     <p>
                       구매수량 : { product.inventory - cartIdCount(product.id) ? <input id="quantity" type="number" value={qty} onChange={handleChange} /> : <span>품절!</span> }
                     </p>
+                    <p>
+                      고객만족도 : <span style={{marginRight:'10px'}}>{Math.round(product.averageRating*100)/100}점</span>
+                      { 
+                          Array.from({length:5}).map((_, index)=>(
+                            <span 
+                            key={index} 
+                            style={{ color: index < product.averageRating ? 'red' : '#ddd'}}
+                            >★</span>
+                          ))
+                      }
+                    </p>
                     <div className="btn">
                     { product.inventory - cartIdCount(product.id) ?
                       <>

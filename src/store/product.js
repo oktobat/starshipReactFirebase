@@ -25,19 +25,38 @@ const productSlice = createSlice({
 
 export const { initProducts, initCarts, initOrders } = productSlice.actions;
 
-export const fetchProducts = ()=> async dispatch => {
+export const fetchProducts = ()=> async (dispatch, getState) => {
+    const review = getState().boards.review
     try {
       productDB.on('value', (snapshot)=>{
         const productsObj = snapshot.val()
         const productsArr = Object.entries(productsObj).map(([key, value]) => {
             return { key:key, ...value }; // 키와 값 모두 포함한 객체 생성
         });
-        dispatch(initProducts(productsArr))
+        const updatedProductsArr = productsArr.map((product)=>{
+            const matchingReview = review.filter((item) => item.product.id == product.id);
+            if (matchingReview) {
+                return {
+                    ...product,
+                    reviewCount: matchingReview.length,
+                    averageRating: calculateAverageRating(matchingReview)
+                }
+            } else {
+                return { ...product, reviewCount: 0, averageRating: 0 };
+            }
+        })
+        dispatch(initProducts(updatedProductsArr))
       })
     } catch (error) {
         console.error('Error fetching products:', error);
     }
 }
+
+// 리뷰 배열에서 평균 평점을 계산하는 함수
+const calculateAverageRating = (reviews) => {
+    const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+    return totalRating / reviews.length;
+};
 
 export const fetchCarts = ()=> async (dispatch, getState) => {
     const user = getState().members.user

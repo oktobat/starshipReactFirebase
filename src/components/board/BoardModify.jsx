@@ -76,7 +76,7 @@ const BoardModify = ({post}) => {
                               <td>평점</td>
                               <td>
                                     {
-                                        [...Array(5)].map((_, index)=>(
+                                        Array.from({length:5}).map((_, index)=>(
                                             <span 
                                             key={index} 
                                             style={{ color: index < rating ? 'red' : '#ddd', cursor:'pointer'}}

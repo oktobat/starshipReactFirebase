@@ -163,13 +163,17 @@ const ProductSection = ({title}) => {
                         <div className="info">
                             <p><a href="#">{item.name}</a></p>
                             <p>{parseInt(item.price).toLocaleString()}</p>
-                            {/* <p className="rating">
-                                {
-                                    Array.from({length:5}).map((_, index)=>(
-                                        (index+1)<=item.rating ? <span key={index}>★</span> : <span key={index}>☆</span>
-                                    ))
-                                }
-                            </p> */}
+                            <p>
+                               { 
+                                  Array.from({length:5}).map((_, index)=>(
+                                    <span 
+                                    key={index} 
+                                    style={{ color: index < item.averageRating ? 'red' : '#ddd'}}
+                                    >★</span>
+                                  ))
+                               }
+                               <span style={{marginLeft:"10px"}}>{item.reviewCount}</span>건
+                            </p>
                             { item.inventory!=cartIdCount(item.id) ? 
                                 <>
                                     <button onClick={ ()=>addToCart(item.id) }><BsCartPlusFill /></button> 
