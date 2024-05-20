@@ -12,9 +12,7 @@ const PaymentFinishSection = ({userKey, product}) => {
     const updateProductsToFirebase = (updateProducts)=>{
         updateProducts.forEach((item)=>{
             productDB.child(item.product.key).transaction((productData)=>{
-                if (productData) {
-                    productData.inventory = parseInt(productData.inventory) - parseInt(item.qty)
-                }
+                productData.inventory = parseInt(productData.inventory) - parseInt(item.qty)
                 return productData; 
             }).then(() => {
                 console.log('수량이 업데이트되었습니다.');

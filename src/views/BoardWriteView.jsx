@@ -2,6 +2,7 @@ import React from 'react';
 import {useSelector} from 'react-redux'
 import styled from 'styled-components'
 import BoardWrite from '@/components/board/BoardWrite'
+import {useLocation} from 'react-router-dom'
 
 const BoardWriteViewBlock = styled.div`
     h2 { 
@@ -10,13 +11,14 @@ const BoardWriteViewBlock = styled.div`
 `
 
 const BoardWriteView = () => {
-    
+    const location = useLocation()
+    const {orderKey, product} = location.state
     const type = useSelector(state=>state.boards.type)
 
     return (
         <BoardWriteViewBlock className="row">
             <h2>{ type }</h2>
-            <BoardWrite type={type} />
+            <BoardWrite type={type} orderKey={orderKey} product={product} />
         </BoardWriteViewBlock>
     );
 };

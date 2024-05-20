@@ -20,7 +20,7 @@ table {
 }
 `
 
-const BoardWrite = ({type}) => {
+const BoardWrite = ({type, orderKey, product}) => {
     const user = useSelector(state=>state.members.user)
     const navigate = useNavigate()
 
@@ -28,6 +28,14 @@ const BoardWrite = ({type}) => {
         subject:"",
         content:""
     })
+
+    const [rating, setRating] = useState(5); 
+
+    const handleStarClick = (starIndex) => {
+        // 클릭된 별 이후의 모든 별의 색을 토글하고 평점을 설정합니다.
+        setRating(starIndex); // 평점 설정
+    };
+
 
     const handleChange = (e)=>{
         console.log(e)
@@ -41,7 +49,7 @@ const BoardWrite = ({type}) => {
         if (type=="notice") {
             noticeDB.push({...board, writer:user.userId, hit:0, date:date})
         } else if (type=="review") {
-            reviewDB.push({...board, writer:user.userId, hit:0, date:date})
+            reviewDB.push({...board, writer:user.userId, hit:0, date:date, subject:product.name, rating:rating, product:product, orderKey:orderKey})
         }
         navigate("/boardList")
     }
@@ -59,10 +67,36 @@ const BoardWrite = ({type}) => {
                             <td>작성자</td>
                             <td><input type="text" name={user.userId} value={user.userId} disabled /></td>
                         </tr>
-                        <tr>
-                            <td>제목</td>
-                            <td><input type="text" name="subject" value={board.subject} onChange={handleChange} /></td>
-                        </tr>
+                        { type=="review" &&
+                           <tr>
+                              <td>평점</td>
+                              <td>
+                                    {
+                                        [...Array(5)].map((_, index)=>(
+                                            <span 
+                                            key={index} 
+                                            style={{ color: index < rating ? 'red' : '#ddd', cursor:'pointer'}}
+                                            onClick={ () => handleStarClick(index+1) }
+                                            >
+                                                ★
+                                            </span>  
+                                        ))
+                                    }
+                                    <span>({rating})점</span>
+                              </td>
+                           </tr> 
+                        }
+                        { type=="notice" ? 
+                            <tr>
+                                <td>제목</td>
+                                <td><input type="text" name="subject" value={board.subject} onChange={handleChange} /></td>
+                            </tr>
+                            :
+                            <tr>
+                                <td>상품명</td>
+                                <td><input type="text" name="subject" value={product.name} disabled /></td>
+                            </tr>
+                        }
                         <tr>
                             <td>내용</td>
                             <td><textarea name="content" value={board.content} onChange={handleChange}></textarea></td>

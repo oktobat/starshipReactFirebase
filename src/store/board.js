@@ -8,7 +8,8 @@ const boardSlice = createSlice({
         notice : [],  
         review : [],
         type : "notice",
-        list : []  
+        list : [],
+        itemPerReviewCount : 0,  
     },
     reducers : {
         initNotice(state, action){

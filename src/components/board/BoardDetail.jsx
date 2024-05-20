@@ -61,10 +61,35 @@ const BoardDetail = ({post}) => {
                         <td>작성자</td>
                         <td><input type="text" name={post.writer} value={post.writer} disabled /></td>
                     </tr>
-                    <tr>
-                        <td>제목</td>
-                        <td><input type="text" name="subject" value={post.subject} disabled /></td>
-                    </tr>
+                    { type=="review" &&
+                        <tr>
+                            <td>평점</td>
+                            <td>
+                                {
+                                    [...Array(5)].map((_, index)=>(
+                                        <span 
+                                        key={index} 
+                                        style={{ color: index < post.rating ? 'red' : '#ddd', cursor:'pointer'}}
+                                        >
+                                            ★
+                                        </span>  
+                                    ))
+                                }
+                                <span>({post.rating})점</span>
+                            </td>
+                        </tr> 
+                        }
+                        { type=="notice" ? 
+                            <tr>
+                                <td>제목</td>
+                                <td><input type="text" name="subject" value={board.subject} disabled /></td>
+                            </tr>
+                            :
+                            <tr>
+                                <td>상품명</td>
+                                <td><input type="text" name="subject" value={post.product.name} disabled /></td>
+                            </tr>
+                        }
                     <tr>
                         <td>내용</td>
                         <td><textarea name="content" value={post.content} disabled></textarea></td>

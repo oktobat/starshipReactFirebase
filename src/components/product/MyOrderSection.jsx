@@ -1,8 +1,9 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components'
 import { useSelector, useDispatch } from 'react-redux'
 import {fetchOrders } from '@/store/product'
-import { Link} from 'react-router-dom'
+import { Link, useNavigate} from 'react-router-dom'
+import {changeType, fetchReview } from '@/store/board'
 
 const MyOrderSectionBlock = styled.div`
 h2 { margin:20px 0 }
@@ -17,12 +18,28 @@ table.orderList {
 
 const MyOrderSection = () => {
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const orders = useSelector(state=>state.products.orders)
     const user = useSelector(state=>state.members.user)
+    const review = useSelector(state=>state.boards.review)
+
+    const [userCompleteReview, setUserCompleteReview] = useState([])
 
     useEffect(() => {
         dispatch(fetchOrders())
+        dispatch(fetchReview());
     }, [dispatch]);
+
+    useEffect(() => {
+        if (user) {
+            setUserCompleteReview(review.filter(item=>item.writer==user.userId))
+        }
+    }, []);
+
+    const handleReviewClick = (orderKey, product)=>{
+        dispatch(changeType("review"))
+        navigate("/boardWrite", {state:{ orderKey, product}})
+    }
 
     return (
         <MyOrderSectionBlock>
@@ -50,14 +67,30 @@ const MyOrderSection = () => {
                                                 Object.keys(items).map((item, ind)=>{
                                                     if (item==='key') return null;
                                                     const value = items[item];
+                                                    const isReviewed = userCompleteReview.some(
+                                                        (userReview)=> userReview.orderKey===items.key && userReview.product.id === value.id
+                                                    )
                                                     return (
-                                                        <div key={ind}>
+                                                        <div key={ind} style={{ borderBottom: '1px solid #ddd', position: 'relative' }}>
                                                            <span>
                                                              <img src={value.photo} alt={value.name} />
                                                            </span>
                                                            <span>상품명 : {value.name} </span> / 
                                                            <span>수량 : {value.quantity}개 </span> /
                                                            <span>금액 : {parseInt(value.quantity) * parseInt(value.price)}원 </span>  
+                                                           {
+                                                            isReviewed ? 
+                                                            <span style={{
+                                                                position: 'absolute', right: '10px', top: '50%',
+                                                                marginTop: '-13px', padding: '5px', background: '#eee',
+                                                            }}>리뷰완료</span>
+                                                            : 
+                                                            <span onClick={ () => handleReviewClick(items.key, value)  } style={{
+                                                                position: 'absolute', right: '10px', top: '50%',
+                                                                marginTop: '-13px', padding: '5px', background: '#eee',
+                                                                cursor:'pointer'
+                                                            }}>리뷰쓰기</span>
+                                                           }
                                                         </div>
                                                     );
                                                 })

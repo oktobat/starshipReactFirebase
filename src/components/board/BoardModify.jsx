@@ -30,6 +30,12 @@ const BoardModify = ({post}) => {
         content:post.content
     })
 
+    const [rating, setRating] = useState(post.rating); // 초기 평점
+
+    const handleStarClick = (starIndex) => {
+        setRating(starIndex); // 평점 설정
+    };
+
     const handleChange = (e)=>{
         console.log(e)
         const {value, name} = e.target
@@ -45,7 +51,7 @@ const BoardModify = ({post}) => {
             })
         } else if (type=="review") {
             reviewDB.child(post.key).update({
-                subject : board.subject,
+                rating : rating,
                 content : board.content
              })
         }
@@ -65,10 +71,36 @@ const BoardModify = ({post}) => {
                             <td>작성자</td>
                             <td><input type="text" name={post.writer} value={post.writer} disabled /></td>
                         </tr>
-                        <tr>
-                            <td>제목</td>
-                            <td><input type="text" name="subject" value={board.subject} onChange={handleChange} /></td>
-                        </tr>
+                        { type=="review" &&
+                           <tr>
+                              <td>평점</td>
+                              <td>
+                                    {
+                                        [...Array(5)].map((_, index)=>(
+                                            <span 
+                                            key={index} 
+                                            style={{ color: index < rating ? 'red' : '#ddd', cursor:'pointer'}}
+                                            onClick={ () => handleStarClick(index+1) }
+                                            >
+                                                ★
+                                            </span>  
+                                        ))
+                                    }
+                                    <span>({rating})점</span>
+                              </td>
+                           </tr> 
+                        }
+                        { type=="notice" ? 
+                            <tr>
+                                <td>제목</td>
+                                <td><input type="text" name="subject" value={board.subject} onChange={handleChange} /></td>
+                            </tr>
+                            :
+                            <tr>
+                                <td>상품명</td>
+                                <td><input type="text" name="subject" value={post.product.name} disabled /></td>
+                            </tr>
+                        }
                         <tr>
                             <td>내용</td>
                             <td><textarea name="content" value={board.content} onChange={handleChange}></textarea></td>
