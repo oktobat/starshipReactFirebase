@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import cn from 'classnames'
 import {useNavigate} from 'react-router-dom'
-import { FaBars } from "react-icons/fa";
+import { FaBars, FaRegUser } from "react-icons/fa";
 import { MdClose } from "react-icons/md";
 import styled from 'styled-components'
 import { Link, NavLink } from 'react-router-dom'
@@ -68,10 +68,19 @@ const ItemCount = styled.div`
 const Hamburger = styled.div`
   position: absolute;
   top: 20px;
+  right: 110px;
+  font-size: 30px;
+  color: blue;
+`
+
+const MyOrder = styled.div`
+  position: absolute;
+  top: 20px;
   right: 70px;
   font-size: 30px;
   color: blue;
 `
+
 
 const MobileNav = styled.nav`
   position:fixed;
@@ -157,6 +166,11 @@ const Header = () => {
                 <span>{ cartsCount }</span>
               </Link>
             </ItemCount>
+            <MyOrder>
+              <Link to="/myOrder">
+                <FaRegUser />
+              </Link>
+            </MyOrder>
             { mobile ||
               <nav id="header__nav">
                   <ul>

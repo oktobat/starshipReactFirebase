@@ -76,11 +76,11 @@ const BoardList = () => {
                     <Link to="/boardWrite">글쓰기</Link>
                 </div>
             }
-            { (type=="review" && user) &&
+            {/* { (type=="review" && user) &&
                 <div className="btn">
                     <Link to="/boardWrite">글쓰기</Link>
                 </div>
-            }
+            } */}
         </BoardListBlock>
     );
 };

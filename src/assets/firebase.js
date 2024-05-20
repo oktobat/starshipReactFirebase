@@ -15,6 +15,7 @@ const firebaseConfig = firebase.initializeApp({
 const oDB = firebaseConfig.database()
 export const productDB = oDB.ref('products')
 export const cartDB = oDB.ref('carts')
+export const orderDB = oDB.ref('orders')
 export const memberDB = oDB.ref('members')
 export const noticeDB = oDB.ref('notice')
 export const reviewDB = oDB.ref('review')
