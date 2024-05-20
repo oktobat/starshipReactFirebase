@@ -91,7 +91,7 @@ export const fetchOrders = ()=> async (dispatch, getState) => {
                             return { key:key, ...value }
                         })
                         const userOrdersArrNotFirst = userOrdersArr.filter((item, key)=>key!==0)
-                        dispatch(initCarts(userOrdersArrNotFirst));        
+                        dispatch(initOrders(userOrdersArrNotFirst));        
                     } else {
                         dispatch(initOrders([]));    
                     }

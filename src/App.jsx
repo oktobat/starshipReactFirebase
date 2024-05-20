@@ -20,6 +20,7 @@ import BoardDetailView from '@/views/BoardDetailView'
 import BoardModifyView from '@/views/BoardModifyView'
 import PaymentView from '@/views/PaymentView'
 import PaymentFinishView from '@/views/PaymentFinishView'
+import MyOrderView from '@/views/MyOrderView'
 
 const App = () => {
   return (
@@ -44,6 +45,7 @@ const App = () => {
         <Route path="/boardModify/:subject" element={ <BoardModifyView /> } />
         <Route path="/payment" element={ <PaymentView /> } />
         <Route path="/paymentFinish" element={ <PaymentFinishView /> } />
+        <Route path="/myOrder" element={ <MyOrderView /> } />
       </Route>
     </Routes>
   );
