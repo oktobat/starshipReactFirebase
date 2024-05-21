@@ -163,7 +163,7 @@ const Header = () => {
             <ItemCount>
               <Link to="/cart">
                 <BsCartPlusFill />
-                <span>{ cartsCount }</span>
+                { cartsCount ? <span>{ cartsCount }</span> : ""}
               </Link>
             </ItemCount>
             <MyOrder>
