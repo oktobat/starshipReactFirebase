@@ -7,8 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import { SiNaver } from "react-icons/si";
 import { RiKakaoTalkFill } from "react-icons/ri";
 import { FaGoogle, FaGithub } from "react-icons/fa";
-import { auth, githubProvider, signInWithPopup } from '@/assets/firebase';
-import { getDatabase, ref, push } from 'firebase/database';
+import { auth, provider as githubProvider, signInWithPopup, memberDB } from '@/assets/firebase';
+// import { getDatabase, ref, push } from 'firebase/database';
 
 const LoginSectionBlock = styled.div`
     max-width:600px; margin:50px auto; 
@@ -67,6 +67,7 @@ const LoginSection = () => {
             return
         }
         let findUser = members.find(item=>item.userId==userId)  // { key:"", userId:""}
+        console.log("로그인멤버", members)
         if (findUser) {
             if (findUser.userPw!=userPw) {
                 alert("비밀번호가 틀렸습니다.")
@@ -96,14 +97,13 @@ const LoginSection = () => {
         try {
             const result = await signInWithPopup(auth, githubProvider);
             const user = result.user;
-
+            console.log("너뭐니?", user)
             // 사용자 정보로 findUser 객체 생성
             let findUser = members.find(item => item.userId === user.email);
+            console.log("기존회원이니?", members)
             if (!findUser) {
                 try {
-                    const database = getDatabase();
-                    const newMemberRef = await push(ref(database, 'members'), {
-                        mId: Date.now(),
+                    const newUserRef = await memberDB.push({
                         userId: user.email,
                         userPw: user.uid,
                         userIrum: '',
@@ -112,17 +112,10 @@ const LoginSection = () => {
                         addr1: '',
                         addr2: ''
                     });
+                    const newUserId = newUserRef.key; // 새로운 사용자의 키 가져오기
+                    findUser = { ...findUser, key: newUserId }; // 키 추가
                     alert('깃허브 계정으로 회원가입에 성공했습니다.');
-                    findUser = {
-                        key: newMemberRef.key,
-                        userId: user.email,
-                        userPw: user.uid,
-                        userIrum: '',
-                        handphone: '',
-                        zipCode: '',
-                        addr1: '',
-                        addr2: ''
-                    };
+                    dispatch(fetchMembers());
                 } catch (error) {
                     console.error('회원가입 오류:', error);
                     return;
