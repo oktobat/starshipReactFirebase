@@ -134,6 +134,7 @@ const Header = () => {
 
     useEffect(()=>{
       dispatch(fetchCarts())
+      dispatch(fetchMembers())
       if (localStorage.getItem('loging')) {
         dispatch(localUser(JSON.parse(localStorage.getItem('loging')))) 
       } 

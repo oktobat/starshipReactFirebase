@@ -4,11 +4,10 @@ import { fetchMembers, userLogin } from '@/store/member';
 import { fetchCarts } from '@/store/product';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { SiNaver } from "react-icons/si";
-import { RiKakaoTalkFill } from "react-icons/ri";
+// import { SiNaver } from "react-icons/si";
+// import { RiKakaoTalkFill } from "react-icons/ri";
 import { FaGoogle, FaGithub } from "react-icons/fa";
-import { auth, provider as githubProvider, signInWithPopup, memberDB } from '@/assets/firebase';
-// import { getDatabase, ref, push } from 'firebase/database';
+import { auth, githubProvider, googleProvider, signInWithPopup, memberDB } from '@/assets/firebase';
 
 const LoginSectionBlock = styled.div`
     max-width:600px; margin:50px auto; 
@@ -113,7 +112,7 @@ const LoginSection = () => {
                         addr2: ''
                     });
                     const newUserId = newUserRef.key; // 새로운 사용자의 키 가져오기
-                    findUser = { ...findUser, key: newUserId }; // 키 추가
+                    findUser = { ...findUser, key: newUserId, userId:user.email, userPw:user.uid }; // 키 추가
                     alert('깃허브 계정으로 회원가입에 성공했습니다.');
                     dispatch(fetchMembers());
                 } catch (error) {
@@ -137,6 +136,55 @@ const LoginSection = () => {
             }
         } catch (error) {
             console.error('GitHub 로그인 중 오류 발생:', error);
+            if (error.code === 'auth/network-request-failed') {
+                alert('네트워크 오류가 발생했습니다. 인터넷 연결을 확인하세요.');
+            } else {
+                alert('로그인 중 오류가 발생했습니다. 나중에 다시 시도하세요.');
+            }
+        }
+    };
+
+    const handleGoogleLogin = async () => {
+        try {
+          // 구글 팝업 로그인을 실행합니다.
+          const result = await signInWithPopup(auth, googleProvider);
+          const user = result.user;
+          let findUser = members.find(item => item.userId === user.email);
+          if (!findUser) {
+            try {
+                const newUserRef = await memberDB.push({
+                    userId: user.email,
+                    userPw: user.uid,
+                    userIrum: '',
+                    handphone: '',
+                    zipCode: '',
+                    addr1: '',
+                    addr2: ''
+                });
+                const newUserId = newUserRef.key;
+                findUser = { key: newUserId, userId: user.email, userPw: user.uid };
+                alert('구글 계정으로 회원가입에 성공했습니다.');
+                dispatch(fetchMembers());
+        } catch (error) {
+          console.error('Google 로그인 중 오류 발생:', error);
+          // 로그인 중 오류가 발생한 경우에 대한 처리를 추가합니다.
+        }
+      };
+
+      dispatch(userLogin({ findUser }));
+            dispatch(fetchCarts());
+
+            if (previousUrl === '/payment') {
+                navigate(previousUrl, { state: JSON.parse(choiceProduct) });
+                sessionStorage.removeItem('previousUrl');
+            } else if (previousUrl === '/product' || previousUrl === '/cart') {
+                navigate(previousUrl);
+                sessionStorage.removeItem('previousUrl');
+            } else {
+                navigate('/');
+            }
+        } catch (error) {
+            console.error('Google 로그인 중 오류 발생:', error);
             if (error.code === 'auth/network-request-failed') {
                 alert('네트워크 오류가 발생했습니다. 인터넷 연결을 확인하세요.');
             } else {
@@ -169,15 +217,15 @@ const LoginSection = () => {
                 </div>
             </form>
             <div className="snslogin">
-                <div className="naver">
+                {/* <div className="naver">
                     <span style={{ fontSize:'15px'}}><SiNaver /></span>
                     <span>네이버 로그인</span>
                 </div>
                 <div className="kakao">
                     <span><RiKakaoTalkFill /></span>
                     <span>카카오 로그인</span>
-                </div>
-                <div className="google">
+                </div> */}
+                <div className="google" onClick={handleGoogleLogin}>
                     <span><FaGoogle /></span>
                     <span>구글 로그인</span>
                 </div>
